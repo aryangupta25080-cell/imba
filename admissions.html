@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Admissions | IMBA Beacon</title>
+<script src="./site-config.js"></script>
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Merriweather:wght@700&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="./section-pages.css"/>
+</head>
+<body>
+  <header class="mainnav">
+    <div class="mainnav-inner">
+      <a class="brand" href="./index.html">
+        <span class="brand-mark">
+          <span class="brand-mark-top">imba</span>
+          <span class="brand-mark-bottom">BEACON</span>
+        </span>
+      </a>
+      <nav class="page-links">
+        <a href="./academics.html">Academics</a>
+        <a href="./about.html">About</a>
+        <a href="./updates.html">Updates</a>
+        <a href="./login.html?access=news">News</a>
+        <a href="./campus-life.html">Campus Life</a>
+        <a class="active" href="./admissions.html">Admissions</a>
+        <a href="./contact.html">Contact</a>
+      </nav>
+      <a class="nav-cta" href="./login.html">Log in / Sign Up</a>
+    </div>
+  </header>
+  <section class="hero"><div class="hero-inner"><div><div class="hero-label">Admissions</div><h1>Registrations start from 15 April. Review your prep path before applying.</h1></div><aside class="hero-card"><h2>On this page</h2><ul><li><a href="#official-registration">Official Registration</a></li><li><a href="#track-comparison">Track Comparison</a></li><li><a href="#eligibility">Eligibility & Details</a></li></ul></aside></div></section>
+  <section id="official-registration"><div class="section-inner"><div class="important-note"><div><small>Important Note</small><h3>Official IMBA registration starts from 15 April.</h3><p>Students should complete the official registration through the IIT Mandi School of Management admissions page. IMBA Beacon is the preparation course support system for interviews, mentoring, practice, and course guidance.</p></div><a class="nav-cta" href="https://som.iitmandi.ac.in/admissions/imba" target="_blank" rel="noopener">Register on IIT Mandi SOM</a></div></div></section>
+  <section id="track-comparison"><div class="section-inner"><div class="section-head"><div class="eyebrow">Track Comparison</div><h2 class="section-title">Choose the support level that matches your preparation needs.</h2><p class="section-copy">Basic offers essential structured practice, while Pro expands mentoring volume and guided touchpoints.</p></div><div class="plans-grid"><article class="plan-card"><div class="plan-label">Basic</div><div class="plan-price">₹1,199</div><div class="plan-note">One-time fee per student</div><ul class="plan-list aligned-list"><li><span class="tick">✓</span><span>3 mock interviews</span></li><li><span class="tick">✓</span><span>Practice quizzes</span></li><li><span class="tick">✓</span><span>1 interview etiquettes session</span></li><li><span class="tick">✓</span><span>Practice sheets</span></li><li><span class="tick">✓</span><span>1 interaction session with current batch</span></li><li><span class="tick">✓</span><span>-</span></li></ul><button class="plan-action" type="button" data-plan-id="basic">Join Basic and Pay</button></article><article class="plan-card featured"><div class="plan-label">Pro</div><div class="plan-price">₹1,799</div><div class="plan-note">One-time fee per student</div><ul class="plan-list aligned-list"><li><span class="tick">✓</span><span>4 mock interviews</span></li><li><span class="tick">✓</span><span>Practice quizzes</span></li><li><span class="tick">✓</span><span>3 interview etiquettes sessions</span></li><li><span class="tick">✓</span><span>Practice sheets</span></li><li><span class="tick">✓</span><span>2 interaction sessions with current batch</span></li><li><span class="tick">✓</span><span>Live maths mentoring sessions</span></li></ul><button class="plan-action" type="button" data-plan-id="pro">Join Pro and Pay</button></article></div><p class="payment-status" id="admissions-payment-status" aria-live="polite"></p></div></section>
+  <section id="eligibility"><div class="section-inner"><div class="section-head"><div class="eyebrow">Eligibility & Details</div><h2 class="section-title">The required details are collected when a student signs up for the first time.</h2></div><div class="card-grid"><article class="info-card"><small>Detail 01</small><h3>Identity details</h3><p>Name, email, and phone number are collected at signup to create and verify the Beacon account.</p></article><article class="info-card"><small>Detail 02</small><h3>Academic context</h3><p>School percentile and candidate category are also collected during signup for admissions context.</p></article><article class="info-card"><small>Detail 03</small><h3>Next step</h3><p>After signing up and verifying OTP, students can continue as part of the admissions and onboarding flow.</p></article></div></div></section>
+  <section id="next-step"><div class="section-inner"><div class="cta-band"><div><h3>Create your Beacon account for preparation support.</h3><p>After reviewing the official IMBA registration page, sign up here to choose your preparation track and keep your course details ready.</p></div><a class="nav-cta" href="./login.html">Open Login / Signup</a></div></div></section>
+  <footer><div class="footer-inner"><span>IMBA Beacon</span><span><a href="./contact.html">Contact Us</a></span></div></footer>
+  <script>
+  (function () {
+    const apiBase = (window.IMBA_SITE_CONFIG && window.IMBA_SITE_CONFIG.apiBaseUrl) || "";
+    const statusNode = document.getElementById("admissions-payment-status");
+    const planButtons = Array.from(document.querySelectorAll("[data-plan-id]"));
+    let config = null;
+    let currentUser = null;
+
+    function setStatus(message, type) {
+      statusNode.textContent = message;
+      statusNode.className = "payment-status" + (type ? " " + type : "");
+    }
+
+    function buildPurchaseLoginUrl(planId) {
+      return `./login.html?access=purchase&plan=${encodeURIComponent(planId)}&next=${encodeURIComponent("./student.html")}`;
+    }
+
+    async function loadConfig() {
+      const response = await fetch(`${apiBase}/api/config`, { credentials: "include" });
+      if (!response.ok) throw new Error("Unable to load payment configuration.");
+      return response.json();
+    }
+
+    async function loadSession() {
+      const response = await fetch(`${apiBase}/api/auth/session`, { credentials: "include" });
+      if (!response.ok) return null;
+      const payload = await response.json();
+      return payload.user || null;
+    }
+
+    async function verifyPayment(planId, paymentDetails) {
+      const response = await fetch(`${apiBase}/api/verify-payment`, {
+        method: "POST",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          planId,
+          razorpay_order_id: paymentDetails.razorpay_order_id,
+          razorpay_payment_id: paymentDetails.razorpay_payment_id,
+          razorpay_signature: paymentDetails.razorpay_signature
+        })
+      });
+
+      const payload = await response.json();
+      if (!response.ok) {
+        throw new Error(payload.message || "Payment verification failed.");
+      }
+
+      setStatus(payload.message || "Payment verified successfully.", "success");
+      window.setTimeout(() => {
+        window.location.href = "./student.html";
+      }, 800);
+    }
+
+    async function startCheckout(planId, triggerButton) {
+      if (!currentUser) {
+        window.location.href = buildPurchaseLoginUrl(planId);
+        return;
+      }
+
+      if (!config?.paymentsEnabled) {
+        setStatus("Online payments are temporarily disabled right now.", "error");
+        return;
+      }
+
+      if (!config?.razorpayKeyId || typeof window.Razorpay !== "function") {
+        setStatus("Razorpay checkout could not be loaded right now.", "error");
+        return;
+      }
+
+      triggerButton.disabled = true;
+      const originalText = triggerButton.textContent;
+      triggerButton.textContent = "Preparing checkout...";
+
+      try {
+        const response = await fetch(`${apiBase}/api/create-order`, {
+          method: "POST",
+          credentials: "include",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({ planId })
+        });
+
+        const payload = await response.json();
+        if (!response.ok) {
+          throw new Error(payload.message || "Unable to create Razorpay order.");
+        }
+
+        const planLabel = planId === "pro" ? "Pro" : "Basic";
+        const razorpay = new window.Razorpay({
+          key: config.razorpayKeyId,
+          amount: payload.amount,
+          currency: payload.currency,
+          name: "IMBA Beacon",
+          description: `${planLabel} plan checkout`,
+          order_id: payload.order_id,
+          prefill: {
+            name: currentUser.name || "",
+            email: currentUser.email || "",
+            contact: currentUser.phone || ""
+          },
+          theme: {
+            color: "#6a1f36"
+          },
+          modal: {
+            ondismiss: () => {
+              setStatus("Checkout was closed before payment completion.", "error");
+            }
+          },
+          handler: (paymentResponse) => {
+            verifyPayment(planId, paymentResponse).catch((error) => {
+              setStatus(error.message || "Payment verification failed.", "error");
+            });
+          }
+        });
+
+        razorpay.on("payment.failed", (event) => {
+          const description = event?.error?.description || event?.error?.reason || "Payment failed.";
+          setStatus(description, "error");
+        });
+
+        razorpay.open();
+      } catch (error) {
+        setStatus(error.message || "Unable to initiate Razorpay payment right now.", "error");
+      } finally {
+        triggerButton.disabled = false;
+        triggerButton.textContent = originalText;
+      }
+    }
+
+    Promise.all([loadConfig(), loadSession()])
+      .then(([loadedConfig, user]) => {
+        config = loadedConfig;
+        currentUser = user;
+      })
+      .catch(() => {
+        setStatus("Unable to load payment setup right now.", "error");
+      });
+
+    planButtons.forEach((button) => {
+      button.addEventListener("click", () => {
+        const planId = button.getAttribute("data-plan-id");
+        if (!planId) return;
+        startCheckout(planId, button);
+      });
+    });
+  })();
+  </script>
+</body>
+</html>

@@ -1,0 +1,1682 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Student Dashboard | IMBA Beacon</title>
+<script src="./site-config.js"></script>
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Merriweather:wght@700&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css"/>
+<style>
+:root{
+  --bg:#FAFAF6;
+  --surface:#fffdf9;
+  --surface-soft:#f7f1e8;
+  --surface-muted:#f1ebe2;
+  --sidebar:#3f2331;
+  --sidebar-deep:#2c1620;
+  --sidebar-line:rgba(255,255,255,.10);
+  --ink:#40252f;
+  --ink-soft:#866f76;
+  --maroon:#6a1f36;
+  --maroon-deep:#4f1629;
+  --amber:#E8923A;
+  --amber-soft:#f6d8ad;
+  --amber-tint:#fff4e6;
+  --pro-badge:#dce8ff;
+  --pro-text:#4060a0;
+  --basic-badge:#f7deb6;
+  --basic-text:#83521d;
+  --none-badge:#ece6df;
+  --none-text:#756860;
+  --border:#eadfd2;
+  --shadow:0 16px 38px rgba(55,28,37,.08);
+  --radius-xl:28px;
+  --radius-lg:20px;
+  --radius-md:16px;
+  --radius-sm:12px;
+}
+*{
+  box-sizing:border-box;
+}
+html{
+  height:100%;
+  scroll-behavior:smooth;
+}
+body{
+  margin:0;
+  height:100%;
+  min-height:100vh;
+  overflow:hidden;
+  font-family:"Manrope",system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  background:linear-gradient(180deg,#fcfbf7 0%,#f4efe7 100%);
+  color:var(--ink);
+}
+a{
+  color:inherit;
+  text-decoration:none;
+}
+button{
+  font:inherit;
+}
+.student-app{
+  min-height:100vh;
+}
+.student-shell{
+  display:flex;
+  min-height:100vh;
+}
+.student-sidebar{
+  position:fixed;
+  inset:0 auto 0 0;
+  width:210px;
+  display:flex;
+  flex-direction:column;
+  background:linear-gradient(180deg,var(--sidebar) 0%,var(--sidebar-deep) 100%);
+  color:#fff;
+  border-right:1px solid rgba(255,255,255,.08);
+}
+.sidebar-brand{
+  padding:1.4rem 1.2rem 1.1rem;
+  border-bottom:1px solid var(--sidebar-line);
+}
+.brand-kicker{
+  font-family:"Merriweather",serif;
+  font-size:1rem;
+  line-height:1.15;
+  letter-spacing:.01em;
+}
+.brand-kicker span{
+  display:block;
+}
+.brand-name{
+  display:block;
+  margin-top:.4rem;
+  color:rgba(255,255,255,.74);
+  font-size:.85rem;
+}
+.sidebar-student{
+  padding:1.3rem 1.2rem 1.1rem;
+  border-bottom:1px solid var(--sidebar-line);
+}
+.student-avatar{
+  width:42px;
+  height:42px;
+  border-radius:50%;
+  display:grid;
+  place-items:center;
+  background:linear-gradient(135deg,#f3bd77 0%,var(--amber) 100%);
+  color:#fff;
+  font-weight:800;
+  font-size:1rem;
+}
+.sidebar-student strong{
+  display:block;
+  margin-top:.85rem;
+  font-size:1rem;
+}
+.sidebar-student span{
+  display:block;
+  margin-top:.18rem;
+  color:rgba(255,255,255,.72);
+  font-size:.84rem;
+}
+.plan-badge{
+  display:inline-flex;
+  align-items:center;
+  gap:.4rem;
+  padding:.36rem .7rem;
+  border-radius:999px;
+  margin-top:.7rem;
+  font-size:.76rem;
+  font-weight:700;
+}
+.plan-badge.none{
+  background:rgba(236,230,223,.18);
+  color:#efe8df;
+}
+.plan-badge.basic{
+  background:rgba(232,146,58,.18);
+  color:#ffd9ab;
+}
+.plan-badge.pro{
+  background:rgba(171,195,255,.18);
+  color:#e4ecff;
+}
+.sidebar-nav{
+  padding:1rem .9rem;
+  display:grid;
+  gap:.35rem;
+  flex:1;
+}
+.sidebar-link,
+.sidebar-logout,
+.mobile-nav-link{
+  display:flex;
+  align-items:center;
+  gap:.72rem;
+  border:none;
+  background:transparent;
+  color:inherit;
+  cursor:pointer;
+  font:inherit;
+  border-radius:14px;
+}
+.sidebar-link{
+  padding:.86rem .9rem;
+  color:rgba(255,255,255,.82);
+  transition:background .2s ease,color .2s ease,transform .2s ease;
+}
+.sidebar-link:hover,
+.sidebar-link.is-active{
+  background:rgba(255,255,255,.09);
+  color:#fff;
+  transform:translateX(2px);
+}
+.sidebar-link i,
+.sidebar-logout i,
+.mobile-nav-link i{
+  font-size:1.08rem;
+}
+.sidebar-footer{
+  padding:1rem;
+  border-top:1px solid var(--sidebar-line);
+}
+.sidebar-logout{
+  width:100%;
+  padding:.92rem .95rem;
+  color:rgba(255,255,255,.84);
+}
+.dashboard-main{
+  margin-left:210px;
+  width:calc(100% - 210px);
+  height:100vh;
+  min-height:100vh;
+  display:flex;
+  flex-direction:column;
+  overflow:hidden;
+}
+.dashboard-topbar{
+  position:sticky;
+  top:0;
+  z-index:15;
+  background:rgba(250,250,246,.95);
+  backdrop-filter:blur(12px);
+  border-bottom:1px solid var(--border);
+}
+.topbar-inner{
+  max-width:1160px;
+  margin:0 auto;
+  padding:1.2rem 1.5rem 1rem;
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:1rem;
+}
+.topbar-copy h1{
+  margin:0;
+  font-family:"Merriweather",serif;
+  font-size:clamp(1.95rem,3vw,2.6rem);
+  line-height:1.08;
+}
+.topbar-copy p{
+  margin:.28rem 0 0;
+  color:var(--ink-soft);
+  font-size:.98rem;
+}
+.plan-pills{
+  display:flex;
+  align-items:center;
+  gap:.5rem;
+  padding:.42rem;
+  border-radius:18px;
+  background:rgba(255,255,255,.92);
+  border:1px solid var(--border);
+  box-shadow:0 10px 24px rgba(60,30,40,.06);
+}
+.plan-pills button{
+  min-width:84px;
+  padding:.72rem .95rem;
+  border-radius:12px;
+  border:1px solid transparent;
+  background:transparent;
+  color:var(--ink-soft);
+  font-weight:700;
+  cursor:pointer;
+  transition:all .2s ease;
+}
+.plan-pills button.is-active{
+  background:linear-gradient(135deg,var(--amber-soft) 0%,var(--amber) 100%);
+  color:var(--maroon-deep);
+  box-shadow:0 10px 20px rgba(232,146,58,.22);
+}
+.plan-pills button:disabled{
+  opacity:.62;
+  cursor:not-allowed;
+}
+.dashboard-scroll{
+  flex:1;
+  min-height:0;
+  overflow-y:auto;
+  overscroll-behavior:contain;
+  -webkit-overflow-scrolling:touch;
+}
+.dashboard-content{
+  max-width:1160px;
+  margin:0 auto;
+  padding:1.35rem 1.5rem 6rem;
+}
+.status-line{
+  min-height:1.4rem;
+  margin:0 0 .95rem;
+  font-size:.95rem;
+  color:var(--ink-soft);
+}
+.status-line.success{
+  color:#2d7b52;
+}
+.status-line.error{
+  color:#bb4357;
+}
+.stats-row{
+  display:grid;
+  grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:.9rem;
+}
+.stat-card,
+.dashboard-card,
+.track-card,
+.sheet-row,
+.batch-card,
+.plan-card{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:var(--radius-lg);
+  box-shadow:var(--shadow);
+}
+.stat-card{
+  padding:1rem 1.05rem;
+}
+.stat-card strong{
+  display:block;
+  font-family:"Merriweather",serif;
+  font-size:2rem;
+  line-height:1;
+}
+.stat-card span{
+  display:block;
+  margin-top:.35rem;
+  color:var(--ink-soft);
+  font-size:.92rem;
+}
+.dashboard-section{
+  margin-top:1.1rem;
+}
+.section-label{
+  margin:0 0 .7rem;
+  color:var(--ink-soft);
+  font-size:.78rem;
+  font-weight:800;
+  letter-spacing:.16em;
+  text-transform:uppercase;
+}
+.free-class-card{
+  padding:1.25rem 1.35rem;
+  border-radius:22px;
+  background:linear-gradient(135deg,#5c2537 0%,#472031 100%);
+  color:#fff;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:1rem;
+}
+.tag-pill{
+  display:inline-flex;
+  align-items:center;
+  gap:.42rem;
+  padding:.38rem .72rem;
+  border-radius:999px;
+  font-size:.76rem;
+  font-weight:700;
+}
+.tag-pill.amber{
+  background:rgba(232,146,58,.2);
+  color:#ffd9a9;
+}
+.tag-pill.pro{
+  background:rgba(171,195,255,.16);
+  color:#dde8ff;
+}
+.free-class-card h2{
+  margin:.8rem 0 .25rem;
+  font-size:1.52rem;
+}
+.free-class-card p{
+  margin:0;
+  color:rgba(255,255,255,.82);
+}
+.cta-outline,
+.cta-solid,
+.track-btn,
+.sheet-btn,
+.section-btn{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:.45rem;
+  border:none;
+  border-radius:14px;
+  cursor:pointer;
+  font:inherit;
+  font-weight:700;
+  transition:transform .2s ease,box-shadow .2s ease,opacity .2s ease;
+}
+.cta-outline:hover:not(:disabled),
+.cta-solid:hover:not(:disabled),
+.track-btn:hover:not(:disabled),
+.sheet-btn:hover:not(:disabled),
+.section-btn:hover:not(:disabled){
+  transform:translateY(-1px);
+}
+.cta-outline{
+  padding:.9rem 1.18rem;
+  background:transparent;
+  color:#fff;
+  border:1px solid rgba(255,255,255,.2);
+}
+.cta-solid{
+  padding:.82rem 1.05rem;
+  background:linear-gradient(135deg,var(--amber-soft) 0%,var(--amber) 100%);
+  color:var(--maroon-deep);
+  box-shadow:0 10px 18px rgba(232,146,58,.22);
+}
+.section-btn,
+.track-btn,
+.sheet-btn{
+  padding:.78rem 1rem;
+  background:#fbf7f1;
+  color:var(--ink);
+  border:1px solid rgba(106,31,54,.10);
+}
+.section-btn:disabled,
+.track-btn:disabled,
+.sheet-btn:disabled{
+  opacity:.58;
+  cursor:not-allowed;
+  transform:none;
+}
+.dashboard-card{
+  padding:1.15rem 1.2rem;
+}
+.locked-card{
+  position:relative;
+  overflow:hidden;
+}
+.locked-card::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:linear-gradient(180deg,rgba(250,250,246,.22) 0%,rgba(250,250,246,.84) 48%,rgba(250,250,246,.96) 100%);
+  backdrop-filter:blur(3px);
+}
+.locked-message{
+  position:absolute;
+  inset:auto 1rem 1rem 1rem;
+  z-index:2;
+  padding:1rem;
+  border-radius:16px;
+  background:rgba(255,255,255,.92);
+  border:1px solid var(--border);
+  display:flex;
+  align-items:flex-start;
+  gap:.75rem;
+}
+.locked-message i{
+  color:var(--maroon);
+  font-size:1.18rem;
+}
+.locked-message strong{
+  display:block;
+}
+.locked-message span{
+  display:block;
+  margin-top:.18rem;
+  color:var(--ink-soft);
+  font-size:.92rem;
+}
+.live-header{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:1rem;
+  flex-wrap:wrap;
+}
+.live-header strong{
+  font-size:1.2rem;
+}
+.live-pill{
+  display:inline-flex;
+  align-items:center;
+  gap:.38rem;
+  color:var(--amber);
+  font-weight:700;
+  font-size:.88rem;
+}
+.live-link-box{
+  margin-top:.95rem;
+  padding:.95rem 1rem;
+  border-radius:18px;
+  background:var(--surface-soft);
+  border:1px solid rgba(232,146,58,.15);
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:1rem;
+}
+.live-link-copy{
+  display:flex;
+  align-items:flex-start;
+  gap:.7rem;
+}
+.live-link-copy i{
+  margin-top:.14rem;
+  color:var(--ink-soft);
+}
+.live-link-copy strong{
+  display:block;
+  font-size:1rem;
+}
+.live-link-copy span,
+.live-meta{
+  color:var(--ink-soft);
+  font-size:.92rem;
+}
+.track-grid{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:.95rem;
+}
+.track-card{
+  padding:1rem;
+}
+.track-card small{
+  display:block;
+  color:var(--ink-soft);
+  font-weight:700;
+  letter-spacing:.06em;
+}
+.track-head{
+  display:flex;
+  align-items:center;
+  gap:.65rem;
+  margin:.72rem 0 .4rem;
+}
+.track-head i{
+  color:var(--maroon);
+  font-size:1.1rem;
+}
+.track-head h3{
+  margin:0;
+  font-size:1.22rem;
+}
+.track-card p{
+  margin:0;
+  color:var(--ink-soft);
+  font-size:.93rem;
+}
+.track-progress{
+  margin-top:.95rem;
+}
+.track-progress-line{
+  height:7px;
+  border-radius:999px;
+  background:#eee6dc;
+  overflow:hidden;
+  margin-top:.36rem;
+}
+.track-progress-line span{
+  display:block;
+  width:0;
+  height:100%;
+  background:linear-gradient(90deg,var(--maroon) 0%,var(--amber) 100%);
+}
+.track-footer{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:1rem;
+  margin-top:.95rem;
+}
+.track-tag{
+  display:inline-flex;
+  align-items:center;
+  gap:.35rem;
+  padding:.34rem .62rem;
+  border-radius:999px;
+  background:var(--surface-muted);
+  color:var(--none-text);
+  font-size:.76rem;
+  font-weight:700;
+}
+.track-tag.pro{
+  background:rgba(171,195,255,.18);
+  color:var(--pro-text);
+}
+.batch-grid{
+  display:grid;
+  gap:.95rem;
+}
+.batch-grid.pro{
+  grid-template-columns:repeat(2,minmax(0,1fr));
+}
+.batch-card{
+  padding:1rem;
+}
+.batch-card strong{
+  display:block;
+  font-size:1.08rem;
+}
+.batch-card p{
+  margin:.35rem 0 .7rem;
+  color:var(--ink-soft);
+}
+.batch-card span{
+  color:var(--ink-soft);
+  font-size:.92rem;
+}
+.sheet-list{
+  display:grid;
+  gap:.72rem;
+}
+.sheet-row{
+  padding:.88rem .95rem;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:1rem;
+}
+.sheet-info{
+  display:flex;
+  align-items:flex-start;
+  gap:.72rem;
+}
+.sheet-icon{
+  width:38px;
+  height:38px;
+  border-radius:12px;
+  display:grid;
+  place-items:center;
+  background:var(--amber-tint);
+  color:var(--amber);
+  font-size:1rem;
+  flex-shrink:0;
+}
+.sheet-info strong{
+  display:block;
+}
+.sheet-info span{
+  display:block;
+  margin-top:.14rem;
+  color:var(--ink-soft);
+  font-size:.9rem;
+}
+.sheet-btn.pro-only{
+  color:var(--none-text);
+  background:var(--surface-muted);
+}
+.plans-grid{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:1rem;
+}
+.plan-card{
+  padding:1.15rem;
+}
+.plan-card.featured{
+  border:2px solid rgba(106,31,54,.22);
+}
+.plan-card h3{
+  margin:.7rem 0 .2rem;
+  font-size:1.4rem;
+}
+.plan-price{
+  margin:.45rem 0;
+  font-family:"Merriweather",serif;
+  font-size:2.05rem;
+  color:var(--maroon);
+}
+.plan-copy{
+  color:var(--ink-soft);
+  font-size:.94rem;
+}
+.plan-card ul{
+  margin:.95rem 0 0;
+  padding-left:1.05rem;
+  display:grid;
+  gap:.45rem;
+  color:var(--ink-soft);
+}
+.profile-grid{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:.75rem;
+}
+.profile-item{
+  padding:.92rem .95rem;
+  border-radius:16px;
+  background:var(--surface-soft);
+}
+.profile-item small{
+  display:block;
+  color:var(--ink-soft);
+  margin-bottom:.18rem;
+}
+.profile-actions{
+  display:flex;
+  justify-content:flex-end;
+  margin-top:1rem;
+}
+.mobile-nav{
+  display:none;
+}
+@media (max-width: 1024px){
+  body{
+    overflow:auto;
+  }
+  .student-sidebar{
+    display:none;
+  }
+  .dashboard-main{
+    margin-left:0;
+    width:100%;
+    height:auto;
+    overflow:visible;
+  }
+  .topbar-inner,
+  .dashboard-content{
+    padding-left:1rem;
+    padding-right:1rem;
+  }
+  .mobile-nav{
+    position:fixed;
+    left:0;
+    right:0;
+    bottom:0;
+    z-index:25;
+    display:grid;
+    grid-auto-flow:column;
+    grid-auto-columns:minmax(82px,1fr);
+    gap:.4rem;
+    padding:.65rem .7rem calc(.65rem + env(safe-area-inset-bottom));
+    background:rgba(255,255,255,.95);
+    border-top:1px solid var(--border);
+    backdrop-filter:blur(14px);
+    overflow-x:auto;
+  }
+  .dashboard-scroll{
+    overflow:visible;
+  }
+  .mobile-nav-link{
+    padding:.72rem .65rem;
+    flex-direction:column;
+    justify-content:center;
+    gap:.26rem;
+    color:var(--ink-soft);
+    min-width:78px;
+    white-space:nowrap;
+  }
+  .mobile-nav-link.is-active{
+    background:rgba(106,31,54,.07);
+    color:var(--maroon);
+  }
+  .mobile-nav-link span{
+    font-size:.72rem;
+    font-weight:700;
+  }
+}
+@media (max-width: 760px){
+  .topbar-inner{
+    flex-direction:column;
+    align-items:flex-start;
+  }
+  .plan-pills{
+    width:100%;
+    justify-content:space-between;
+  }
+  .stats-row,
+  .track-grid,
+  .plans-grid,
+  .profile-grid,
+  .batch-grid.pro{
+    grid-template-columns:1fr;
+  }
+  .free-class-card,
+  .live-link-box,
+  .sheet-row,
+  .track-footer{
+    flex-direction:column;
+    align-items:flex-start;
+  }
+  .cta-outline,
+  .cta-solid,
+  .section-btn,
+  .track-btn,
+  .sheet-btn{
+    width:100%;
+  }
+  .dashboard-content{
+    padding-bottom:8rem;
+  }
+}
+</style>
+</head>
+<body>
+  <div class="student-app">
+    <div class="student-shell">
+      <aside class="student-sidebar">
+        <div class="sidebar-brand">
+          <div class="brand-kicker">
+            <span>IB</span>
+            <span>IMBA Beacon</span>
+          </div>
+          <small class="brand-name">Student Dashboard</small>
+        </div>
+        <div class="sidebar-student" id="student-summary"></div>
+        <nav class="sidebar-nav" id="sidebar-nav"></nav>
+        <div class="sidebar-footer">
+          <button class="sidebar-logout" id="logout-btn" type="button">
+            <i class="ti ti-logout"></i>
+            <span>Log out</span>
+          </button>
+        </div>
+      </aside>
+
+      <main class="dashboard-main">
+        <header class="dashboard-topbar">
+          <div class="topbar-inner">
+            <div class="topbar-copy" id="topbar-copy"></div>
+            <div class="plan-pills" id="plan-pills"></div>
+          </div>
+        </header>
+
+        <div class="dashboard-scroll">
+          <div class="dashboard-content">
+            <p class="status-line" id="dashboard-status" aria-live="polite"></p>
+            <section class="stats-row" id="stats-row"></section>
+            <div id="sections-root"></div>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <nav class="mobile-nav" id="mobile-nav"></nav>
+  </div>
+
+  <script>
+  (function () {
+    const apiBase = (window.IMBA_SITE_CONFIG && window.IMBA_SITE_CONFIG.apiBaseUrl) || "";
+    const USER_PLAN_KEY = "userPlan";
+    const USER_NAME_KEY = "userName";
+    const USER_EMAIL_KEY = "userEmail";
+    const FREE_CLASS_LINK_KEY = "freeClassLink";
+    const LIVE_CLASS_LINK_KEY = "liveClassLink";
+    const NAV_ITEMS = [
+      { id: "dashboard", label: "Dashboard", icon: "layout-dashboard", target: "section-dashboard" },
+      { id: "recordings", label: "Recordings", icon: "video", target: "section-recordings" },
+      { id: "sheets", label: "Sheets", icon: "files", target: "section-sheets" },
+      { id: "quiz", label: "Quiz", icon: "help-square-rounded", target: "section-quiz" },
+      { id: "batch", label: "Batch Sessions", icon: "users-group", target: "section-batch" },
+      { id: "profile", label: "Profile", icon: "user-circle", target: "section-profile" }
+    ];
+
+    const statusNode = document.getElementById("dashboard-status");
+    const studentSummaryNode = document.getElementById("student-summary");
+    const sidebarNavNode = document.getElementById("sidebar-nav");
+    const mobileNavNode = document.getElementById("mobile-nav");
+    const topbarCopyNode = document.getElementById("topbar-copy");
+    const planPillsNode = document.getElementById("plan-pills");
+    const statsRowNode = document.getElementById("stats-row");
+    const sectionsRoot = document.getElementById("sections-root");
+    const logoutButton = document.getElementById("logout-btn");
+
+    let currentUser = null;
+    let currentPlan = "none";
+    let currentConfig = null;
+
+    function setStatus(message, type) {
+      statusNode.textContent = message || "";
+      statusNode.className = "status-line" + (type ? " " + type : "");
+    }
+
+    function escapeHtml(value) {
+      return String(value || "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#39;");
+    }
+
+    function normalizePlan(value) {
+      return value === "basic" || value === "pro" || value === "none" ? value : "none";
+    }
+
+    function inferPlanFromUser(user) {
+      const planId = user && user.courseAccess && user.courseAccess.purchased
+        ? normalizePlan(user.courseAccess.planId)
+        : "none";
+      return planId === "basic" || planId === "pro" ? planId : "none";
+    }
+
+    function formatPrice(paise) {
+      const amount = Number(paise || 0) / 100;
+      return new Intl.NumberFormat("en-IN", {
+        style: "currency",
+        currency: "INR",
+        maximumFractionDigits: 0
+      }).format(amount);
+    }
+
+    function getPlanCatalog() {
+      const plans = (currentConfig && Array.isArray(currentConfig.plans) ? currentConfig.plans : [])
+        .reduce(function (accumulator, plan) {
+          if (plan && plan.id) {
+            accumulator[plan.id] = plan;
+          }
+          return accumulator;
+        }, {});
+
+      return {
+        basic: plans.basic || { id: "basic", label: "Basic", amount: 119900, currency: "INR" },
+        pro: plans.pro || { id: "pro", label: "Pro", amount: 179900, currency: "INR" }
+      };
+    }
+
+    function getStudentState(user) {
+      const sessionEmail = (user && user.email) || "";
+      const sessionName = (user && user.name) || "Student";
+      const storedEmail = localStorage.getItem(USER_EMAIL_KEY) || "";
+
+      if (sessionEmail && storedEmail && storedEmail.toLowerCase() !== sessionEmail.toLowerCase()) {
+        localStorage.setItem(USER_NAME_KEY, sessionName);
+        localStorage.setItem(USER_EMAIL_KEY, sessionEmail);
+        localStorage.setItem(USER_PLAN_KEY, inferPlanFromUser(user));
+      } else {
+        localStorage.setItem(USER_NAME_KEY, localStorage.getItem(USER_NAME_KEY) || sessionName);
+        localStorage.setItem(USER_EMAIL_KEY, localStorage.getItem(USER_EMAIL_KEY) || sessionEmail);
+        const storedPlan = localStorage.getItem(USER_PLAN_KEY);
+        if (!storedPlan) {
+          localStorage.setItem(USER_PLAN_KEY, inferPlanFromUser(user));
+        } else if (normalizePlan(storedPlan) === "none" && inferPlanFromUser(user) !== "none") {
+          localStorage.setItem(USER_PLAN_KEY, inferPlanFromUser(user));
+        }
+      }
+
+      const name = localStorage.getItem(USER_NAME_KEY) || sessionName;
+      const email = localStorage.getItem(USER_EMAIL_KEY) || sessionEmail || "student@example.com";
+      const initials = (name || "IB")
+        .split(" ")
+        .filter(Boolean)
+        .slice(0, 2)
+        .map(function (part) { return part.charAt(0).toUpperCase(); })
+        .join("") || "IB";
+      const plan = normalizePlan(localStorage.getItem(USER_PLAN_KEY));
+      const phone = user && user.phone ? user.phone : "Not provided";
+      const percentile = user && user.schoolPercentile !== undefined && user.schoolPercentile !== null && user.schoolPercentile !== ""
+        ? String(user.schoolPercentile)
+        : "Not provided";
+      const category = user && user.category ? user.category : "Not provided";
+
+      return {
+        name: name,
+        email: email,
+        initials: initials,
+        plan: plan,
+        phone: phone,
+        percentile: percentile,
+        category: category
+      };
+    }
+
+    function getPlanBadge(plan) {
+      if (plan === "basic") return { label: "Basic Plan", className: "basic" };
+      if (plan === "pro") return { label: "Pro Plan", className: "pro" };
+      return { label: "Not Enrolled", className: "none" };
+    }
+
+    function getStats(plan) {
+      if (plan === "basic") {
+        return [
+          { value: "3", label: "Mock interviews" },
+          { value: "1", label: "Etiquette sessions" },
+          { value: "0%", label: "Course progress" },
+          { value: "5", label: "Sheets available" }
+        ];
+      }
+      if (plan === "pro") {
+        return [
+          { value: "4", label: "Mock interviews" },
+          { value: "3", label: "Etiquette sessions" },
+          { value: "0%", label: "Course progress" },
+          { value: "10", label: "Sheets available" }
+        ];
+      }
+      return [
+        { value: "1", label: "Free class" },
+        { value: "—", label: "Mock interviews" },
+        { value: "0%", label: "Course progress" },
+        { value: "0", label: "Sheets available" }
+      ];
+    }
+
+    function renderSidebar(student) {
+      const badge = getPlanBadge(student.plan);
+      studentSummaryNode.innerHTML = `
+        <div class="student-avatar">${escapeHtml(student.initials)}</div>
+        <strong>${escapeHtml(student.name)}</strong>
+        <span>${escapeHtml(student.email)}</span>
+        <span class="plan-badge ${badge.className}">
+          <i class="ti ti-crown"></i>
+          ${escapeHtml(badge.label)}
+        </span>
+      `;
+
+      const navMarkup = NAV_ITEMS.map(function (item, index) {
+        return `
+          <a href="#${item.target}" class="sidebar-link${index === 0 ? " is-active" : ""}" data-nav-target="${item.target}">
+            <i class="ti ti-${item.icon}"></i>
+            <span>${escapeHtml(item.label)}</span>
+          </a>
+        `;
+      }).join("");
+
+      sidebarNavNode.innerHTML = navMarkup;
+      mobileNavNode.innerHTML = NAV_ITEMS.concat([{ id: "logout", label: "Logout", icon: "logout", target: "logout" }]).map(function (item, index) {
+        return `
+          <button class="mobile-nav-link${index === 0 ? " is-active" : ""}" type="button" data-nav-target="${item.target}">
+            <i class="ti ti-${item.icon}"></i>
+            <span>${escapeHtml(item.label)}</span>
+          </button>
+        `;
+      }).join("");
+    }
+
+    function renderTopbar(student) {
+      topbarCopyNode.innerHTML = `
+        <h1>Welcome back, ${escapeHtml((student.name.split(" ")[0]) || student.name)}</h1>
+        <p>IIT Mandi IMBA Interview Preparation</p>
+      `;
+
+      planPillsNode.innerHTML = `
+        <button type="button" data-plan-id="basic" class="${student.plan === "basic" ? "is-active" : ""}" ${student.plan === "basic" ? "disabled" : ""}>Basic</button>
+        <button type="button" data-plan-id="pro" class="${student.plan === "pro" ? "is-active" : ""}" ${student.plan === "pro" ? "disabled" : ""}>Pro</button>
+      `;
+    }
+
+    function renderStats(plan) {
+      statsRowNode.innerHTML = getStats(plan).map(function (item) {
+        return `
+          <article class="stat-card">
+            <strong>${escapeHtml(item.value)}</strong>
+            <span>${escapeHtml(item.label)}</span>
+          </article>
+        `;
+      }).join("");
+    }
+
+    function renderFreeClass() {
+      return `
+        <section class="dashboard-section" id="section-dashboard">
+          <p class="section-label">Free Class</p>
+          <article class="free-class-card">
+            <div>
+              <span class="tag-pill amber"><i class="ti ti-gift"></i> Available for all students</span>
+              <h2>Introductory Interview Prep Class</h2>
+              <p>1 complimentary session — no purchase required</p>
+            </div>
+            <button class="cta-outline" type="button" data-action="join-free-class">
+              <span>Join Free Class</span>
+              <i class="ti ti-arrow-up-right"></i>
+            </button>
+          </article>
+        </section>
+      `;
+    }
+
+    function renderLiveClass(plan) {
+      const liveLink = (localStorage.getItem(LIVE_CLASS_LINK_KEY) || "").trim();
+      const hasLiveLink = Boolean(liveLink);
+
+      if (plan === "none") {
+        return `
+          <section class="dashboard-section">
+            <p class="section-label">Live Class</p>
+            <article class="dashboard-card locked-card">
+              <div class="live-header">
+                <strong>Next Session — Mock Interview Round</strong>
+                <span class="live-pill"><i class="ti ti-point-filled"></i> Upcoming · Today 4:00 PM</span>
+              </div>
+              <div class="live-link-box">
+                <div class="live-link-copy">
+                  <i class="ti ti-clock-hour-4"></i>
+                  <div>
+                    <strong>Link will be posted 30 minutes before class starts</strong>
+                    <span>Waiting for mentor to post the link...</span>
+                  </div>
+                </div>
+                <button class="section-btn" type="button" disabled>Join Class</button>
+              </div>
+              <p class="live-meta">Mentor: Hardik Agarwal · Duration: 60 min · All enrolled students</p>
+              <div class="locked-message">
+                <i class="ti ti-lock"></i>
+                <div>
+                  <strong>Live classes available after purchase</strong>
+                  <span>Enroll in a plan to unlock class access and mentor updates.</span>
+                </div>
+              </div>
+            </article>
+          </section>
+        `;
+      }
+
+      return `
+        <section class="dashboard-section">
+          <p class="section-label">Live Class</p>
+          <article class="dashboard-card">
+            <div class="live-header">
+              <strong>Next Session — Mock Interview Round</strong>
+              <span class="live-pill"><i class="ti ti-point-filled"></i> Upcoming · Today 4:00 PM</span>
+            </div>
+            <div class="live-link-box">
+              <div class="live-link-copy">
+                <i class="ti ti-clock-hour-4"></i>
+                <div>
+                  <strong>${hasLiveLink ? "Class link is active" : "Link will be posted 30 minutes before class starts"}</strong>
+                  <span>${hasLiveLink ? escapeHtml(liveLink) : "Waiting for mentor to post the link..."}</span>
+                </div>
+              </div>
+              <button class="section-btn" type="button" data-open-link="${escapeHtml(liveLink)}" ${hasLiveLink ? "" : "disabled"}>
+                Join Class
+              </button>
+            </div>
+            <p class="live-meta">Mentor: Hardik Agarwal · Duration: 60 min · ${plan === "pro" ? "Pro — priority seating" : "All enrolled students"}</p>
+          </article>
+        </section>
+      `;
+    }
+
+    function renderTracks(plan) {
+      if (plan === "none") {
+        const lockedCards = [
+          { id: "section-recordings", label: "Track 01", icon: "video", title: "Video Recordings", copy: "Lecture recordings and guided sessions." },
+          { id: "section-quiz", label: "Track 02", icon: "help-square-rounded", title: "Practice Quiz", copy: "Check your knowledge and performance." },
+          { id: "", label: "Track 03", icon: "microphone", title: "Mock Interviews", copy: "Guided mock rounds with mentor feedback." },
+          { id: "", label: "Track 04", icon: "message-circle-2", title: "Interview Etiquettes", copy: "Etiquette coaching and confidence building." }
+        ];
+
+        return `
+          <section class="dashboard-section" id="section-tracks">
+            <p class="section-label">Course Tracks</p>
+            <div class="track-grid">
+              ${lockedCards.map(function (card) {
+                return `
+                  <article class="track-card locked-card"${card.id ? ` id="${card.id}"` : ""}>
+                    <small>${escapeHtml(card.label)}</small>
+                    <div class="track-head">
+                      <i class="ti ti-${card.icon}"></i>
+                      <h3>${escapeHtml(card.title)}</h3>
+                    </div>
+                    <p>${escapeHtml(card.copy)}</p>
+                    <div class="track-progress">
+                      <span>Locked until purchase</span>
+                      <div class="track-progress-line"><span></span></div>
+                    </div>
+                    <div class="track-footer">
+                      <span class="track-tag"><i class="ti ti-lock"></i> Locked</span>
+                      <button class="track-btn" type="button" disabled>Open</button>
+                    </div>
+                    <div class="locked-message">
+                      <i class="ti ti-lock"></i>
+                      <div>
+                        <strong>${escapeHtml(card.title)} unlocks after purchase</strong>
+                        <span>Choose a plan below to open this module.</span>
+                      </div>
+                    </div>
+                  </article>
+                `;
+              }).join("")}
+            </div>
+          </section>
+        `;
+      }
+
+      const interviews = plan === "pro" ? 4 : 3;
+      const verbal = plan === "pro" ? 3 : 1;
+      const mentoringUnlocked = plan === "pro";
+
+      return `
+        <section class="dashboard-section" id="section-tracks">
+          <p class="section-label">Course Tracks</p>
+          <div class="track-grid">
+            <article class="track-card" id="section-recordings">
+              <small>Track 01</small>
+              <div class="track-head">
+                <i class="ti ti-video"></i>
+                <h3>Video Recordings</h3>
+              </div>
+              <p>Lecture recordings and guided sessions.</p>
+              <div class="track-progress">
+                <span>Progress <strong style="float:right;">0 / 12</strong></span>
+                <div class="track-progress-line"><span style="width:0%;"></span></div>
+              </div>
+              <div class="track-footer">
+                <span>12 lectures</span>
+                <button class="track-btn" type="button" data-placeholder="recordings">Open library</button>
+              </div>
+            </article>
+
+            <article class="track-card" id="section-quiz">
+              <small>Track 02</small>
+              <div class="track-head">
+                <i class="ti ti-help-square-rounded"></i>
+                <h3>Practice Quiz</h3>
+              </div>
+              <p>Check your knowledge and performance.</p>
+              <div class="track-progress">
+                <span>Progress <strong style="float:right;">0 / 8</strong></span>
+                <div class="track-progress-line"><span style="width:0%;"></span></div>
+              </div>
+              <div class="track-footer">
+                <span>8 quizzes</span>
+                <button class="track-btn" type="button" data-placeholder="quiz">Try quiz</button>
+              </div>
+            </article>
+
+            <article class="track-card">
+              <small>Track 03</small>
+              <div class="track-head">
+                <i class="ti ti-microphone"></i>
+                <h3>Mock Interviews</h3>
+              </div>
+              <p>${interviews} guided ${interviews === 1 ? "session" : "sessions"} with mentor feedback.</p>
+              <div class="track-footer">
+                <span>${interviews} ${interviews === 1 ? "session" : "sessions"}</span>
+                <button class="track-btn" type="button" data-placeholder="mock-interviews">Book session</button>
+              </div>
+            </article>
+
+            <article class="track-card">
+              <small>Track 04</small>
+              <div class="track-head">
+                <i class="ti ti-message-circle-2"></i>
+                <h3>Interview Etiquettes</h3>
+              </div>
+              <p>${verbal} guided etiquette ${verbal === 1 ? "session" : "sessions"}.</p>
+              <div class="track-footer">
+                <span>${verbal} ${verbal === 1 ? "session" : "sessions"}</span>
+                <button class="track-btn" type="button" data-placeholder="verbal">Open</button>
+              </div>
+            </article>
+          </div>
+
+          <article class="dashboard-card" style="margin-top:.95rem;">
+            <div class="live-header">
+              <strong>Maths Session</strong>
+              <span class="track-tag pro">${mentoringUnlocked ? '<i class="ti ti-bolt"></i> Pro active' : '<i class="ti ti-lock"></i> Pro only'}</span>
+            </div>
+            <p class="live-meta" style="margin-top:.55rem;">${mentoringUnlocked ? "One live maths session is unlocked in your Pro plan." : "This maths session opens after upgrading to Pro."}</p>
+            <div style="margin-top:.95rem;">
+              <button class="section-btn" type="button" ${mentoringUnlocked ? 'data-placeholder="mentoring"' : "disabled"}>
+                ${mentoringUnlocked ? "Open maths session" : "Locked for Basic"}
+              </button>
+            </div>
+          </article>
+        </section>
+      `;
+    }
+
+    function renderBatchSessions(plan) {
+      if (plan === "none") {
+        return `
+          <section class="dashboard-section" id="section-batch">
+            <p class="section-label">Batch Sessions</p>
+            <article class="dashboard-card locked-card">
+              <div class="batch-grid">
+                <div class="batch-card">
+                  <strong>Current batch interaction</strong>
+                  <p>Peer interaction and mentor moderation unlock after purchase.</p>
+                  <span>Schedule shared by mentor</span>
+                </div>
+              </div>
+              <div class="locked-message">
+                <i class="ti ti-lock"></i>
+                <div>
+                  <strong>Batch sessions unlock after purchase</strong>
+                  <span>Enroll in Basic or Pro to join the current batch.</span>
+                </div>
+              </div>
+            </article>
+          </section>
+        `;
+      }
+
+      const sessions = plan === "pro"
+        ? [
+            { title: "Batch Interaction Round 1", copy: "Schedule TBA by mentor" },
+            { title: "Batch Interaction Round 2", copy: "Priority interaction with the current cohort" }
+          ]
+        : [
+            { title: "Batch Interaction Round", copy: "Schedule TBA by mentor" }
+          ];
+
+      return `
+        <section class="dashboard-section" id="section-batch">
+          <p class="section-label">Batch Sessions</p>
+          <div class="batch-grid ${plan === "pro" ? "pro" : ""}">
+            ${sessions.map(function (session, index) {
+              return `
+                <article class="batch-card">
+                  <strong>${escapeHtml(session.title)}</strong>
+                  <p>${escapeHtml(session.copy)}</p>
+                  <span>Session ${index + 1}</span>
+                </article>
+              `;
+            }).join("")}
+          </div>
+        </section>
+      `;
+    }
+
+    function renderSheets(plan) {
+      const sheets = [
+        { title: "Introduction to IMBA Interview", meta: "Foundation Sheet · PDF", locked: false },
+        { title: "Behavioural Prep Framework", meta: "Practice Sheet · PDF", locked: false },
+        { title: "Communication & Confidence Sheet", meta: "Practice Sheet · PDF", locked: false },
+        { title: "Advanced Mock Interview Sheet", meta: "Pro Sheet · PDF", locked: plan !== "pro" },
+        { title: "Solution Sheet — All Rounds", meta: "Pro Sheet · PDF", locked: plan !== "pro" }
+      ];
+
+      return `
+        <section class="dashboard-section" id="section-sheets">
+          <p class="section-label">Practice Sheets</p>
+          <article class="dashboard-card ${plan === "none" ? "locked-card" : ""}">
+            <div class="sheet-list">
+              ${sheets.map(function (sheet) {
+                return `
+                  <div class="sheet-row">
+                    <div class="sheet-info">
+                      <div class="sheet-icon"><i class="ti ti-file-download"></i></div>
+                      <div>
+                        <strong>${escapeHtml(sheet.title)}</strong>
+                        <span>${escapeHtml(sheet.meta)}</span>
+                      </div>
+                    </div>
+                    <button class="sheet-btn${sheet.locked || plan === "none" ? " pro-only" : ""}" type="button" ${sheet.locked || plan === "none" ? "disabled" : `data-download-sheet="${escapeHtml(sheet.title)}"`}>
+                      ${sheet.locked || plan === "none" ? "Pro only" : "Download"}
+                    </button>
+                  </div>
+                `;
+              }).join("")}
+            </div>
+            ${plan === "none" ? `
+              <div class="locked-message">
+                <i class="ti ti-lock"></i>
+                <div>
+                  <strong>Practice sheets unlock after purchase</strong>
+                  <span>Enroll to download guided preparation material.</span>
+                </div>
+              </div>
+            ` : ""}
+          </article>
+        </section>
+      `;
+    }
+
+    function renderUpgradeSection() {
+      const catalog = getPlanCatalog();
+      return `
+        <section class="dashboard-section">
+          <p class="section-label">Upgrade</p>
+          <div class="plans-grid">
+            <article class="plan-card">
+              <span class="tag-pill amber">Basic</span>
+              <h3>Basic Plan</h3>
+              <div class="plan-price">${escapeHtml(formatPrice(catalog.basic.amount))}</div>
+              <p class="plan-copy">Structured support for focused interview preparation.</p>
+              <ul>
+                <li>3 mock interviews</li>
+                <li>Practice quizzes</li>
+                <li>1 interview etiquettes session</li>
+                <li>Practice sheets</li>
+                <li>1 batch interaction session</li>
+              </ul>
+              <div style="margin-top:1rem;">
+                <button class="cta-solid" type="button" data-plan-id="basic">Choose Basic</button>
+              </div>
+            </article>
+
+            <article class="plan-card featured">
+              <span class="tag-pill amber">Pro</span>
+              <h3>Pro Plan</h3>
+              <div class="plan-price">${escapeHtml(formatPrice(catalog.pro.amount))}</div>
+              <p class="plan-copy">Expanded mentoring with deeper guided support.</p>
+              <ul>
+                <li>4 mock interviews</li>
+                <li>Practice quizzes</li>
+                <li>3 interview etiquettes sessions</li>
+                <li>Practice sheets</li>
+                <li>2 batch interaction sessions</li>
+                <li>1 live maths session</li>
+              </ul>
+              <div style="margin-top:1rem;">
+                <button class="cta-solid" type="button" data-plan-id="pro">Choose Pro</button>
+              </div>
+            </article>
+          </div>
+        </section>
+      `;
+    }
+
+    function renderProfile(student) {
+      const badge = getPlanBadge(student.plan);
+      return `
+        <section class="dashboard-section" id="section-profile">
+          <p class="section-label">Profile</p>
+          <article class="dashboard-card">
+            <div class="profile-grid">
+              <div class="profile-item"><small>Full Name</small><strong>${escapeHtml(student.name)}</strong></div>
+              <div class="profile-item"><small>Email</small><strong>${escapeHtml(student.email)}</strong></div>
+              <div class="profile-item"><small>Current Plan</small><strong>${escapeHtml(badge.label)}</strong></div>
+              <div class="profile-item"><small>Phone</small><strong>${escapeHtml(student.phone)}</strong></div>
+              <div class="profile-item"><small>School Percentile</small><strong>${escapeHtml(student.percentile)}</strong></div>
+              <div class="profile-item"><small>Category</small><strong>${escapeHtml(student.category)}</strong></div>
+            </div>
+            <div class="profile-actions">
+              <a class="section-btn" href="./student-profile.html">Edit profile</a>
+            </div>
+          </article>
+        </section>
+      `;
+    }
+
+    function renderSections(student) {
+      return [
+        renderFreeClass(),
+        renderTracks(student.plan),
+        renderLiveClass(student.plan),
+        renderBatchSessions(student.plan),
+        renderSheets(student.plan),
+        student.plan === "none" ? renderUpgradeSection() : "",
+        renderProfile(student)
+      ].join("");
+    }
+
+    function renderDashboard(student) {
+      currentPlan = student.plan;
+      renderSidebar(student);
+      renderTopbar(student);
+      renderStats(student.plan);
+      sectionsRoot.innerHTML = renderSections(student);
+      updateActiveNav("section-dashboard");
+    }
+
+    async function fetchSession() {
+      const response = await fetch(`${apiBase}/api/auth/session`, { credentials: "include" });
+      if (!response.ok) {
+        throw new Error("Unable to read session.");
+      }
+      const data = await response.json();
+      return data.user || null;
+    }
+
+    async function fetchConfig() {
+      const response = await fetch(`${apiBase}/api/config`, { credentials: "include" });
+      if (!response.ok) {
+        throw new Error("Unable to load dashboard configuration.");
+      }
+      return response.json();
+    }
+
+    async function logout() {
+      try {
+        const response = await fetch(`${apiBase}/api/auth/logout`, {
+          method: "POST",
+          credentials: "include"
+        });
+        if (!response.ok) {
+          throw new Error("Logout failed.");
+        }
+
+        localStorage.removeItem(USER_PLAN_KEY);
+        localStorage.removeItem(USER_NAME_KEY);
+        localStorage.removeItem(USER_EMAIL_KEY);
+        localStorage.removeItem(FREE_CLASS_LINK_KEY);
+        localStorage.removeItem(LIVE_CLASS_LINK_KEY);
+        window.location.href = "./index.html";
+      } catch (error) {
+        setStatus(error.message || "Unable to logout right now.", "error");
+      }
+    }
+
+    async function verifyPayment(planId, paymentDetails) {
+      try {
+        const response = await fetch(`${apiBase}/api/verify-payment`, {
+          method: "POST",
+          credentials: "include",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            planId: planId,
+            razorpay_order_id: paymentDetails.razorpay_order_id,
+            razorpay_payment_id: paymentDetails.razorpay_payment_id,
+            razorpay_signature: paymentDetails.razorpay_signature
+          })
+        });
+
+        const payload = await response.json();
+        if (!response.ok) {
+          setStatus(payload.message || "Payment verification failed.", "error");
+          return;
+        }
+
+        localStorage.setItem(USER_PLAN_KEY, planId);
+        if (payload.user) {
+          currentUser = payload.user;
+        }
+
+        renderDashboard(getStudentState(currentUser));
+        setStatus(payload.message || "Payment verified successfully.", "success");
+      } catch (error) {
+        setStatus("Payment completed, but verification could not be confirmed.", "error");
+      }
+    }
+
+    async function startCheckout(planId, triggerButton) {
+      if (!currentUser) {
+        window.location.href = `./login.html?access=purchase&plan=${encodeURIComponent(planId)}&next=${encodeURIComponent("./student.html")}`;
+        return;
+      }
+
+      if (currentPlan === planId) {
+        setStatus(`${planId === "pro" ? "Pro" : "Basic"} plan is already active on this account.`, "success");
+        return;
+      }
+
+      if (!currentConfig || !currentConfig.paymentsEnabled) {
+        setStatus("Online payments are temporarily disabled right now.", "error");
+        return;
+      }
+
+      if (!currentConfig.razorpayKeyId || typeof window.Razorpay !== "function") {
+        setStatus("Razorpay checkout could not be loaded right now.", "error");
+        return;
+      }
+
+      const originalText = triggerButton.textContent;
+      triggerButton.disabled = true;
+      triggerButton.textContent = "Preparing...";
+
+      try {
+        const response = await fetch(`${apiBase}/api/create-order`, {
+          method: "POST",
+          credentials: "include",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({ planId: planId })
+        });
+
+        const payload = await response.json();
+        if (!response.ok) {
+          setStatus(payload.message || "Unable to create Razorpay order.", "error");
+          return;
+        }
+
+        const student = getStudentState(currentUser);
+        const razorpay = new window.Razorpay({
+          key: currentConfig.razorpayKeyId,
+          amount: payload.amount,
+          currency: payload.currency,
+          name: "IMBA Beacon",
+          description: `${planId === "pro" ? "Pro" : "Basic"} plan checkout`,
+          order_id: payload.order_id,
+          prefill: {
+            name: student.name,
+            email: student.email,
+            contact: currentUser.phone || ""
+          },
+          theme: {
+            color: "#6a1f36"
+          },
+          modal: {
+            ondismiss: function () {
+              setStatus("Checkout was closed before payment completion.", "error");
+            }
+          },
+          handler: function (paymentResponse) {
+            verifyPayment(planId, paymentResponse);
+          }
+        });
+
+        razorpay.on("payment.failed", function (event) {
+          const description = event && event.error && (event.error.description || event.error.reason) || "Payment failed.";
+          setStatus(description, "error");
+        });
+
+        razorpay.open();
+      } catch (error) {
+        setStatus("Unable to initiate Razorpay payment right now.", "error");
+      } finally {
+        triggerButton.disabled = false;
+        triggerButton.textContent = originalText;
+      }
+    }
+
+    function updateActiveNav(target) {
+      document.querySelectorAll("[data-nav-target]").forEach(function (node) {
+        const matches = node.getAttribute("data-nav-target") === target;
+        node.classList.toggle("is-active", matches);
+      });
+    }
+
+    function safeOpenLink(link) {
+      if (!link) {
+        return false;
+      }
+      const href = /^https?:\/\//i.test(link) ? link : `https://${link}`;
+      window.open(href, "_blank", "noopener,noreferrer");
+      return true;
+    }
+
+    document.addEventListener("click", function (event) {
+      const navButton = event.target.closest("[data-nav-target]");
+      if (navButton) {
+        const target = navButton.getAttribute("data-nav-target");
+        if (target === "logout") {
+          logout();
+          return;
+        }
+        const section = document.getElementById(target);
+        if (section) {
+          event.preventDefault();
+          section.scrollIntoView({ behavior: "smooth", block: "start" });
+          updateActiveNav(target);
+        }
+        return;
+      }
+
+      const purchaseButton = event.target.closest("[data-plan-id]");
+      if (purchaseButton) {
+        event.preventDefault();
+        startCheckout(purchaseButton.getAttribute("data-plan-id"), purchaseButton);
+        return;
+      }
+
+      const linkButton = event.target.closest("[data-open-link]");
+      if (linkButton) {
+        event.preventDefault();
+        if (!safeOpenLink(linkButton.getAttribute("data-open-link"))) {
+          setStatus("Live class link is not available yet.", "error");
+        }
+        return;
+      }
+
+      const freeClassButton = event.target.closest("[data-action='join-free-class']");
+      if (freeClassButton) {
+        event.preventDefault();
+        const freeClassLink = (localStorage.getItem(FREE_CLASS_LINK_KEY) || "").trim();
+        if (!safeOpenLink(freeClassLink)) {
+          setStatus("Free class link will be shared here once the session slot is announced.", "success");
+        }
+        return;
+      }
+
+      const downloadButton = event.target.closest("[data-download-sheet]");
+      if (downloadButton) {
+        event.preventDefault();
+        const title = downloadButton.getAttribute("data-download-sheet") || "Sheet";
+        setStatus(`${title} is ready for your PDF attachment. Add the final file when you want downloads live.`, "success");
+        return;
+      }
+
+      const placeholderButton = event.target.closest("[data-placeholder]");
+      if (placeholderButton) {
+        event.preventDefault();
+        const feature = placeholderButton.getAttribute("data-placeholder");
+        const messages = {
+          recordings: "Recording hub can be connected here next.",
+          quiz: "Quiz module can be connected to this tile next.",
+          "mock-interviews": "Interview scheduling can be attached to this button next.",
+          verbal: "Interview etiquettes session room can be connected here next.",
+          mentoring: "Maths session room can be connected here next."
+        };
+        setStatus(messages[feature] || "This module can be connected here next.", "success");
+      }
+    });
+
+    logoutButton.addEventListener("click", logout);
+
+    Promise.all([fetchConfig(), fetchSession()])
+      .then(function (results) {
+        currentConfig = results[0];
+        currentUser = results[1];
+
+        if (!currentUser) {
+          window.location.href = "./login.html?next=./student.html";
+          return;
+        }
+
+        renderDashboard(getStudentState(currentUser));
+        setStatus("Dashboard loaded successfully.", "success");
+      })
+      .catch(function (error) {
+        setStatus(error.message || "Unable to load the dashboard.", "error");
+      });
+  })();
+  </script>
+</body>
+</html>

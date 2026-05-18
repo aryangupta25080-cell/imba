@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Student Home | IMBA Beacon</title>
+<script src="./site-config.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Merriweather:wght@700&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="./section-pages.css"/>
+<style>
+body{min-height:100vh;background:linear-gradient(180deg,#f4f7fb 0%,#edf2f7 100%);color:#203248}
+.portal-shell{width:min(1380px,calc(100% - 1.4rem));margin:.8rem auto}
+.portal-app{display:grid;grid-template-columns:245px minmax(0,1fr);min-height:calc(100vh - 1.6rem);background:#fbfdff;border:1px solid rgba(31,55,82,.08);border-radius:28px;overflow:hidden;box-shadow:0 24px 60px rgba(23,37,63,.12)}
+.portal-side{background:linear-gradient(180deg,#111825 0%,#0f1622 100%);color:#fff;padding:1rem .95rem;display:flex;flex-direction:column;gap:1rem}
+.portal-brand{display:flex;align-items:center;gap:.8rem;padding:.3rem .35rem 1rem;border-bottom:1px solid rgba(255,255,255,.08)}
+.portal-badge{width:42px;height:42px;border-radius:14px;display:grid;place-items:center;background:linear-gradient(135deg,var(--gold-soft),var(--gold));color:var(--maroon);font-weight:800}
+.portal-brand-copy strong{display:block;font-size:1rem}
+.portal-brand-copy span{display:block;color:rgba(255,255,255,.56);font-size:.78rem}
+.portal-nav{display:grid;gap:.28rem}
+.portal-link{display:flex;align-items:center;gap:.8rem;padding:.82rem .88rem;border-radius:15px;color:rgba(255,255,255,.78);font-weight:700}
+.portal-link.active{background:linear-gradient(135deg,rgba(57,126,221,.24),rgba(34,101,191,.16));box-shadow:inset 0 0 0 1px rgba(116,173,255,.16);color:#fff}
+.portal-link:hover{background:rgba(255,255,255,.05)}
+.portal-icon{width:18px;height:18px;border-radius:6px;background:rgba(255,255,255,.14);display:inline-flex;align-items:center;justify-content:center;font-size:.7rem;flex:0 0 auto}
+.portal-foot{margin-top:auto;display:grid;gap:.55rem;padding:.2rem .3rem 0;color:rgba(255,255,255,.5);font-size:.78rem}
+.portal-main{padding:1rem}
+.portal-topbar{display:flex;align-items:center;justify-content:space-between;gap:1rem;background:#fff;border:1px solid rgba(31,55,82,.08);border-radius:20px;padding:1rem 1.05rem;box-shadow:0 10px 30px rgba(31,55,82,.06)}
+.portal-topbar h1{font-size:1.72rem;line-height:1.05;margin-bottom:.15rem}
+.portal-topbar p{color:#738399;font-size:.92rem}
+.portal-toptools{display:flex;align-items:center;gap:.7rem}
+.portal-chip,.portal-btn,.portal-logout{display:inline-flex;align-items:center;justify-content:center;border-radius:999px;font-weight:800}
+.portal-chip{padding:.42rem .8rem;background:#eff4fb;color:#49627d;font-size:.8rem}
+.portal-btn{padding:.82rem 1.08rem;background:linear-gradient(135deg,var(--gold-soft),var(--gold));color:var(--maroon)}
+.portal-logout{padding:.82rem 1rem;border:1px solid rgba(31,55,82,.1);background:#fff;color:#52667d;cursor:pointer}
+.portal-grid{display:grid;grid-template-columns:1.15fr .85fr;gap:1rem;margin-top:1rem}
+.panel{background:#fff;border:1px solid rgba(31,55,82,.08);border-radius:22px;padding:1.1rem;box-shadow:0 12px 28px rgba(31,55,82,.06)}
+.panel h2{font-size:1.08rem;margin-bottom:.35rem}
+.panel-copy{color:#718196;font-size:.92rem;margin-bottom:1rem}
+.course-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.9rem}
+.course-card{border:1px solid rgba(31,55,82,.08);border-radius:18px;padding:1rem;background:#f8fbff}
+.course-card h3{font-size:1rem;margin-bottom:.45rem}
+.course-card p{color:#6f8096;font-size:.9rem;line-height:1.6}
+.course-badge{display:inline-flex;padding:.34rem .68rem;border-radius:999px;background:#eef4fb;color:#36536f;font-size:.74rem;font-weight:800;margin-bottom:.75rem}
+.course-card.unavailable{background:#fcf7f7}
+.course-card.unavailable .course-badge{background:#f5e8e8;color:#874e58}
+.profile-card{display:grid;gap:1rem}
+.profile-top{display:flex;align-items:center;gap:1rem}
+.profile-avatar,.profile-avatar-fallback{width:72px;height:72px;border-radius:22px;background:#eff4fb;display:grid;place-items:center;overflow:hidden}
+.profile-avatar{object-fit:cover}
+.profile-avatar-fallback{font-weight:800;color:var(--maroon);font-size:1.25rem}
+.profile-name{font-family:"Merriweather",serif;font-size:1.55rem;line-height:1}
+.profile-email{color:#6f8096;margin-top:.35rem}
+.profile-list{display:grid;gap:.72rem}
+.profile-row{display:flex;justify-content:space-between;gap:1rem;padding:.82rem .9rem;border-radius:16px;background:#f7faff;border:1px solid rgba(31,55,82,.06)}
+.profile-row span{color:#708198}
+.profile-row strong{text-align:right}
+.purchase-note{margin-top:1rem;padding:1rem 1.05rem;border-radius:18px;background:linear-gradient(135deg,rgba(106,31,54,.08),rgba(201,162,75,.12));border:1px solid rgba(106,31,54,.08)}
+.purchase-note h3{font-size:1rem;margin-bottom:.4rem}
+.purchase-note p{color:#6c5960;font-size:.92rem}
+.portal-status{margin-top:1rem;min-height:1.5em;color:#6f8096}
+.portal-status.error{color:#b33d4b}
+@media (max-width:980px){
+  .portal-app{grid-template-columns:1fr}
+  .portal-grid,.course-grid{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+  <div class="portal-shell">
+    <div class="portal-app">
+      <aside class="portal-side">
+        <div class="portal-brand">
+          <div class="portal-badge">IB</div>
+          <div class="portal-brand-copy">
+            <strong>IMBA Beacon</strong>
+            <span>Student home</span>
+          </div>
+        </div>
+        <nav class="portal-nav">
+          <a class="portal-link active" href="#home"><span class="portal-icon">■</span><span>Home</span></a>
+          <a class="portal-link" href="#courses"><span class="portal-icon">▲</span><span>Courses</span></a>
+          <a class="portal-link" href="#profile"><span class="portal-icon">●</span><span>Profile</span></a>
+          <a class="portal-link" href="./contact.html"><span class="portal-icon">?</span><span>Support</span></a>
+        </nav>
+        <div class="portal-foot">
+          <div>Premium dashboard unlocks after course purchase.</div>
+          <div><a href="./student.html" style="color:inherit">Purchased dashboard</a></div>
+        </div>
+      </aside>
+      <main class="portal-main">
+        <div class="portal-topbar" id="home">
+          <div>
+            <h1>Student Home</h1>
+            <p>Browse available courses, review your profile, and continue your IMBA Beacon journey from one simple place.</p>
+          </div>
+          <div class="portal-toptools">
+            <span class="portal-chip" id="portal-provider">Beacon Account</span>
+            <button class="portal-logout" id="logout-btn" type="button">Logout</button>
+          </div>
+        </div>
+
+        <div class="portal-grid">
+          <section class="panel" id="courses">
+            <h2>Available Courses</h2>
+            <p class="panel-copy">These are the preparation options currently visible to every logged-in student before purchase.</p>
+            <div class="course-grid">
+              <article class="course-card">
+                <span class="course-badge">Available</span>
+                <h3>Basic</h3>
+                <p>Essential IMBA interview preparation with mock interviews, practice sheets, quizzes, and interview etiquettes support.</p>
+              </article>
+              <article class="course-card">
+                <span class="course-badge">Available</span>
+                <h3>Pro</h3>
+                <p>Extended support with more mock interviews, more interview etiquettes sessions, extra interaction time, and one live maths session.</p>
+              </article>
+              <article class="course-card unavailable">
+                <span class="course-badge">Coming Later</span>
+                <h3>Premium Dashboard Access</h3>
+                <p>This full dashboard becomes relevant after a student purchases a course and onboarding is completed.</p>
+              </article>
+              <article class="course-card unavailable">
+                <span class="course-badge">Locked</span>
+                <h3>Advanced Progress Tracking</h3>
+                <p>Class schedules, mentor allocation, quizzes, and progress tracking will appear after course enrollment.</p>
+              </article>
+            </div>
+            <div class="purchase-note">
+              <h3>After purchase</h3>
+              <p>Students who purchase a course will get access to the separate advanced dashboard with classes, mentor status, quizzes, and progress tools.</p>
+            </div>
+          </section>
+
+          <section class="panel" id="profile">
+            <h2>Your Profile</h2>
+            <p class="panel-copy">Check the same details that were filled during signup.</p>
+            <div class="profile-card">
+              <div class="profile-top">
+                <img class="profile-avatar" id="profile-avatar" alt="Student avatar" hidden/>
+                <div class="profile-avatar-fallback" id="profile-avatar-fallback">IB</div>
+                <div>
+                  <div class="profile-name" id="profile-name">Student</div>
+                  <div class="profile-email" id="profile-email">student@example.com</div>
+                </div>
+              </div>
+              <div class="profile-list">
+                <div class="profile-row"><span>Phone</span><strong id="profile-phone">-</strong></div>
+                <div class="profile-row"><span>School Percentile</span><strong id="profile-percentile">-</strong></div>
+                <div class="profile-row"><span>Category</span><strong id="profile-category">-</strong></div>
+                <div class="profile-row"><span>Account Type</span><strong id="profile-provider">Beacon Account</strong></div>
+                <div class="profile-row"><span>Joined</span><strong id="profile-created">Recently</strong></div>
+              </div>
+              <a class="portal-btn" href="./admissions.html">View Course Options</a>
+            </div>
+          </section>
+        </div>
+        <p class="portal-status" id="portal-status" aria-live="polite"></p>
+      </main>
+    </div>
+  </div>
+  <script>
+  (function () {
+    const apiBase = (window.IMBA_SITE_CONFIG && window.IMBA_SITE_CONFIG.apiBaseUrl) || "";
+    const statusNode = document.getElementById("portal-status");
+    const logoutButton = document.getElementById("logout-btn");
+
+    function setStatus(message, type) {
+      statusNode.textContent = message;
+      statusNode.className = "portal-status" + (type ? " " + type : "");
+    }
+
+    function formatDate(value) {
+      if (!value) return "Recently";
+      const date = new Date(value);
+      if (Number.isNaN(date.getTime())) return "Recently";
+      return date.toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" });
+    }
+
+    function renderUser(user) {
+      document.getElementById("profile-name").textContent = user.name || "Student";
+      document.getElementById("profile-email").textContent = user.email || "";
+      document.getElementById("profile-phone").textContent = user.phone || "Not provided";
+      document.getElementById("profile-percentile").textContent = user.schoolPercentile !== null && user.schoolPercentile !== undefined ? `${user.schoolPercentile}%` : "Not provided";
+      document.getElementById("profile-category").textContent = user.category || "Not provided";
+      document.getElementById("profile-provider").textContent = user.provider === "google" ? "Google Account" : "Beacon Account";
+      document.getElementById("profile-created").textContent = formatDate(user.createdAt);
+      document.getElementById("portal-provider").textContent = user.provider === "google" ? "Google Account" : "Beacon Account";
+
+      const avatar = document.getElementById("profile-avatar");
+      const fallback = document.getElementById("profile-avatar-fallback");
+      if (user.picture) {
+        avatar.src = user.picture;
+        avatar.hidden = false;
+        fallback.hidden = true;
+      } else {
+        const initials = (user.name || "IB").split(" ").filter(Boolean).slice(0, 2).map((part) => part[0].toUpperCase()).join("") || "IB";
+        avatar.hidden = true;
+        fallback.hidden = false;
+        fallback.textContent = initials;
+      }
+    }
+
+    async function init() {
+      try {
+        const response = await fetch(`${apiBase}/api/auth/session`, { credentials: "include" });
+        const payload = await response.json();
+        const user = payload.user || null;
+        if (!user) {
+          window.location.href = "./login.html";
+          return;
+        }
+        renderUser(user);
+      } catch (error) {
+        setStatus("Unable to load your student home right now.", "error");
+      }
+    }
+
+    logoutButton.addEventListener("click", async () => {
+      await fetch(`${apiBase}/api/auth/logout`, { method: "POST", credentials: "include" });
+      window.location.href = "./login.html";
+    });
+
+    window.addEventListener("load", init);
+  })();
+  </script>
+</body>
+</html>

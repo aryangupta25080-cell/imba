@@ -1,0 +1,17 @@
+{
+  "name": "imba",
+  "version": "1.0.0",
+  "private": true,
+  "description": "IMBA Beacon frontend with lightweight Node backend",
+  "main": "server.js",
+  "dependencies": {
+    "google-auth-library": "^9.15.1",
+    "nodemailer": "^8.0.4",
+    "pg": "^8.16.0",
+    "razorpay": "^2.9.6"
+  },
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  }
+}

@@ -1,0 +1,629 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>IMBA Beacon Admin</title>
+<script src="./site-config.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --maroon:#6a1f36;
+  --maroon-2:#8a3b56;
+  --gold:#c9a24b;
+  --gold-soft:#e3c680;
+  --ink:#4a2933;
+  --muted:#86656f;
+  --surface:#ffffff;
+  --surface-alt:#fbf6f7;
+  --line:rgba(106,31,54,.1);
+  --shadow:0 22px 50px rgba(106,31,54,.12);
+}
+body{
+  font-family:"Manrope",sans-serif;
+  background:linear-gradient(180deg,#fcf7f8,#f6edef);
+  color:var(--ink);
+  line-height:1.6;
+  min-height:100vh;
+}
+.shell{
+  width:min(1180px,calc(100% - 2rem));
+  margin:0 auto;
+  padding:2rem 0 3rem;
+}
+.hero{
+  background:linear-gradient(135deg,var(--maroon),var(--maroon-2));
+  color:#fff;
+  border-radius:28px;
+  padding:2rem;
+  box-shadow:var(--shadow);
+  margin-bottom:1.5rem;
+}
+.hero h1{
+  font-size:clamp(2rem,4vw,3rem);
+  margin-bottom:.5rem;
+}
+.hero p{
+  color:rgba(255,255,255,.8);
+  max-width:60ch;
+}
+.panel{
+  background:var(--surface);
+  border:1px solid var(--line);
+  border-radius:24px;
+  padding:1.5rem;
+  box-shadow:0 14px 36px rgba(106,31,54,.07);
+}
+.controls{
+  display:grid;
+  grid-template-columns:minmax(220px,320px) repeat(4,max-content);
+  gap:.9rem;
+  align-items:center;
+  margin-bottom:1rem;
+}
+.stats{
+  display:grid;
+  grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:1rem;
+  margin-bottom:1.2rem;
+}
+.stat-card{
+  background:linear-gradient(180deg,#fff,#fdf7f8);
+  border:1px solid var(--line);
+  border-radius:20px;
+  padding:1rem 1.1rem;
+}
+.stat-label{
+  font-size:.78rem;
+  text-transform:uppercase;
+  letter-spacing:.08em;
+  color:var(--muted);
+  margin-bottom:.35rem;
+}
+.stat-value{
+  font-size:1.5rem;
+  font-weight:800;
+  color:var(--maroon);
+  line-height:1.1;
+}
+.toolbar{
+  display:grid;
+  grid-template-columns:minmax(200px,1fr) minmax(180px,240px) auto auto;
+  gap:.9rem;
+  align-items:center;
+  margin-bottom:1rem;
+}
+input,button{
+  font:inherit;
+}
+input,select{
+  width:100%;
+  border:1px solid var(--line);
+  border-radius:16px;
+  padding:.95rem 1rem;
+  outline:none;
+  background:#fff;
+  color:var(--ink);
+}
+button{
+  border:none;
+  border-radius:999px;
+  padding:.95rem 1.2rem;
+  cursor:pointer;
+  font-weight:800;
+}
+.btn-primary{
+  background:linear-gradient(135deg,var(--gold-soft),var(--gold));
+  color:#4a2a10;
+}
+.btn-secondary{
+  background:rgba(106,31,54,.08);
+  color:var(--maroon);
+  border:1px solid rgba(106,31,54,.12);
+}
+.btn-ghost{
+  background:#fff;
+  color:var(--ink);
+  border:1px solid var(--line);
+}
+.meta{
+  display:flex;
+  justify-content:space-between;
+  gap:1rem;
+  align-items:center;
+  flex-wrap:wrap;
+  margin-bottom:1rem;
+}
+.count{
+  font-size:.95rem;
+  color:var(--muted);
+}
+.status{
+  min-height:1.6em;
+  color:var(--muted);
+  margin-bottom:.8rem;
+}
+.status.error{color:#b33d4b}
+.status.success{color:#7f6a1b}
+.table-wrap{
+  overflow:auto;
+  border:1px solid var(--line);
+  border-radius:18px;
+}
+.section-title{
+  font-size:1.15rem;
+  color:var(--maroon);
+  margin-bottom:.35rem;
+}
+.section-copy{
+  color:var(--muted);
+  margin-bottom:1rem;
+}
+.stack-panels{
+  display:grid;
+  gap:1.5rem;
+}
+.access-table td{
+  min-width:130px;
+}
+.toggle-grid{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:.45rem .85rem;
+}
+.toggle-grid label{
+  display:flex;
+  align-items:center;
+  gap:.45rem;
+  font-size:.82rem;
+  color:var(--ink);
+  white-space:nowrap;
+}
+.inline-select{
+  min-width:130px;
+}
+.cell-stack{
+  display:grid;
+  gap:.35rem;
+}
+table{
+  width:100%;
+  border-collapse:collapse;
+  min-width:860px;
+  background:#fff;
+}
+th,td{
+  text-align:left;
+  padding:.9rem 1rem;
+  border-bottom:1px solid var(--line);
+  vertical-align:top;
+  font-size:.92rem;
+}
+th{
+  background:var(--surface-alt);
+  color:var(--maroon);
+  font-size:.8rem;
+  text-transform:uppercase;
+  letter-spacing:.08em;
+}
+tbody tr:hover{
+  background:#fffaf3;
+}
+.empty{
+  padding:1.5rem;
+  color:var(--muted);
+}
+@media (max-width:860px){
+  .controls,.toolbar,.stats{
+    grid-template-columns:1fr;
+  }
+}
+</style>
+</head>
+<body>
+  <main class="shell">
+    <section class="hero">
+      <h1>IMBA Beacon Admin</h1>
+      <p>View applicant submissions and export them as CSV. Use your admin access key to unlock the dashboard.</p>
+    </section>
+
+    <section class="panel">
+      <div class="controls">
+        <input id="access-key" type="password" placeholder="Enter admin access key"/>
+        <button class="btn-primary" id="load-data" type="button">Load Applications</button>
+        <button class="btn-secondary" id="refresh-data" type="button">Refresh</button>
+        <button class="btn-secondary" id="download-csv" type="button">Download CSV</button>
+        <button class="btn-ghost" id="clear-key" type="button">Clear Key</button>
+      </div>
+
+      <div class="stats">
+        <article class="stat-card">
+          <div class="stat-label">Applications</div>
+          <div class="stat-value" id="stat-total">0</div>
+        </article>
+        <article class="stat-card">
+          <div class="stat-label">Phone Filled</div>
+          <div class="stat-value" id="stat-phone">0</div>
+        </article>
+        <article class="stat-card">
+          <div class="stat-label">Category Filled</div>
+          <div class="stat-value" id="stat-category">0</div>
+        </article>
+        <article class="stat-card">
+          <div class="stat-label">Recent Entry</div>
+          <div class="stat-value" id="stat-latest">-</div>
+        </article>
+      </div>
+
+      <div class="toolbar">
+        <input id="search-input" type="search" placeholder="Search by name, email, phone"/>
+        <select id="category-filter">
+          <option value="">All categories</option>
+        </select>
+        <button class="btn-secondary" id="copy-emails" type="button">Copy Emails</button>
+        <button class="btn-ghost" id="reset-filters" type="button">Reset Filters</button>
+      </div>
+
+      <div class="meta">
+        <div class="count" id="entry-count">No data loaded yet.</div>
+      </div>
+      <p class="status" id="admin-status" aria-live="polite"></p>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Email</th>
+              <th>Phone</th>
+              <th>School Percentile</th>
+              <th>Category</th>
+              <th>Submitted At</th>
+            </tr>
+          </thead>
+          <tbody id="admin-table-body">
+            <tr>
+              <td class="empty" colspan="6">Enter your admin access key and load the dashboard to view submissions.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="panel">
+      <h2 class="section-title">Student Access Control</h2>
+      <p class="section-copy">Grant purchased access, assign the plan, and choose exactly which premium features are unlocked for each Beacon account.</p>
+      <p class="status" id="access-status" aria-live="polite"></p>
+      <div class="table-wrap">
+        <table class="access-table">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Email</th>
+              <th>Verified</th>
+              <th>Profile</th>
+              <th>Plan</th>
+              <th>Purchased</th>
+              <th>Feature Access</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody id="access-table-body">
+            <tr>
+              <td class="empty" colspan="8">Load applications to manage student access.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+<script>
+(function () {
+  const apiBase = (window.IMBA_SITE_CONFIG && window.IMBA_SITE_CONFIG.apiBaseUrl) || "";
+  const keyInput = document.getElementById("access-key");
+  const loadButton = document.getElementById("load-data");
+  const refreshButton = document.getElementById("refresh-data");
+  const csvButton = document.getElementById("download-csv");
+  const clearKeyButton = document.getElementById("clear-key");
+  const searchInput = document.getElementById("search-input");
+  const categoryFilter = document.getElementById("category-filter");
+  const copyEmailsButton = document.getElementById("copy-emails");
+  const resetFiltersButton = document.getElementById("reset-filters");
+  const status = document.getElementById("admin-status");
+  const accessStatus = document.getElementById("access-status");
+  const entryCount = document.getElementById("entry-count");
+  const tableBody = document.getElementById("admin-table-body");
+  const accessTableBody = document.getElementById("access-table-body");
+  const statTotal = document.getElementById("stat-total");
+  const statPhone = document.getElementById("stat-phone");
+  const statCategory = document.getElementById("stat-category");
+  const statLatest = document.getElementById("stat-latest");
+  const storageKey = "imba_admin_access_key";
+  let allEntries = [];
+  let allUsers = [];
+
+  keyInput.value = sessionStorage.getItem(storageKey) || "";
+
+  function setStatus(message, type) {
+    status.textContent = message;
+    status.className = "status" + (type ? " " + type : "");
+  }
+
+  function setAccessStatus(message, type) {
+    accessStatus.textContent = message;
+    accessStatus.className = "status" + (type ? " " + type : "");
+  }
+
+  function getAccessKey() {
+    const accessKey = keyInput.value.trim();
+    if (accessKey) {
+      sessionStorage.setItem(storageKey, accessKey);
+    }
+    return accessKey;
+  }
+
+  function formatTimestamp(value) {
+    const date = new Date(value);
+    if (Number.isNaN(date.getTime())) return value || "-";
+    return date.toLocaleString("en-IN", {
+      dateStyle: "medium",
+      timeStyle: "short"
+    });
+  }
+
+  function renderRows(entries) {
+    if (!entries.length) {
+      tableBody.innerHTML = '<tr><td class="empty" colspan="6">No submissions yet.</td></tr>';
+      return;
+    }
+
+    tableBody.innerHTML = entries.map((entry) => `
+      <tr>
+        <td>${entry.name || "-"}</td>
+        <td>${entry.email || "-"}</td>
+        <td>${entry.phone || "-"}</td>
+        <td>${entry.schoolPercentile ?? "-"}</td>
+        <td>${entry.category || "-"}</td>
+        <td>${formatTimestamp(entry.submittedAt)}</td>
+      </tr>
+    `).join("");
+  }
+
+  function updateStats(entries) {
+    const total = entries.length;
+    const phoneFilled = entries.filter((entry) => String(entry.phone || "").trim()).length;
+    const categoryFilled = entries.filter((entry) => String(entry.category || "").trim()).length;
+    const latest = entries
+      .map((entry) => entry.submittedAt)
+      .filter(Boolean)
+      .sort()
+      .at(-1);
+
+    statTotal.textContent = String(total);
+    statPhone.textContent = String(phoneFilled);
+    statCategory.textContent = String(categoryFilled);
+    statLatest.textContent = latest ? formatTimestamp(latest).split(",")[0] : "-";
+  }
+
+  function updateCategoryOptions(entries) {
+    const current = categoryFilter.value;
+    const categories = [...new Set(entries.map((entry) => String(entry.category || "").trim()).filter(Boolean))].sort((a, b) => a.localeCompare(b));
+    categoryFilter.innerHTML = '<option value="">All categories</option>' + categories.map((category) => `<option value="${category}">${category}</option>`).join("");
+    categoryFilter.value = categories.includes(current) ? current : "";
+  }
+
+  function applyFilters() {
+    const query = searchInput.value.trim().toLowerCase();
+    const category = categoryFilter.value.trim();
+    const filtered = allEntries.filter((entry) => {
+      const matchesQuery = !query || [entry.name, entry.email, entry.phone, entry.schoolPercentile, entry.category]
+        .some((value) => String(value || "").toLowerCase().includes(query));
+      const matchesCategory = !category || String(entry.category || "").trim() === category;
+      return matchesQuery && matchesCategory;
+    });
+
+    renderRows(filtered);
+    entryCount.textContent = `${filtered.length} visible of ${allEntries.length} application${allEntries.length === 1 ? "" : "s"}`;
+  }
+
+  function featureToggleMarkup(user, key, label) {
+    const checked = user.courseAccess?.featureAccess?.[key] ? "checked" : "";
+    return `<label><input type="checkbox" data-feature-key="${key}" ${checked}/> <span>${label}</span></label>`;
+  }
+
+  function renderAccessRows(entries) {
+    if (!entries.length) {
+      accessTableBody.innerHTML = '<tr><td class="empty" colspan="8">No Beacon users found yet.</td></tr>';
+      return;
+    }
+
+    accessTableBody.innerHTML = entries.map((user) => `
+      <tr data-user-email="${user.email}">
+        <td>${user.name || "-"}</td>
+        <td>${user.email || "-"}</td>
+        <td>${user.emailVerified ? "Verified" : "Pending"}</td>
+        <td>${user.profileStatus?.isComplete ? "Complete" : `Incomplete (${user.profileStatus?.completedFields || 0}/3)`}</td>
+        <td>
+          <select class="inline-select" data-plan-select>
+            <option value="">No plan</option>
+            <option value="basic" ${user.courseAccess?.planId === "basic" ? "selected" : ""}>Basic</option>
+            <option value="pro" ${user.courseAccess?.planId === "pro" ? "selected" : ""}>Pro</option>
+          </select>
+        </td>
+        <td>
+          <label><input type="checkbox" data-purchased-toggle ${user.courseAccess?.purchased ? "checked" : ""}/> Paid</label>
+        </td>
+        <td>
+          <div class="toggle-grid">
+            ${featureToggleMarkup(user, "liveClasses", "Live classes")}
+            ${featureToggleMarkup(user, "mockInterviews", "Mock interviews")}
+            ${featureToggleMarkup(user, "practiceZone", "Practice zone")}
+            ${featureToggleMarkup(user, "mentorFeedback", "Mentor feedback")}
+            ${featureToggleMarkup(user, "leaderboard", "Leaderboard")}
+            ${featureToggleMarkup(user, "progressTracker", "Progress tracker")}
+            ${featureToggleMarkup(user, "newsBriefs", "News briefs")}
+          </div>
+        </td>
+        <td>
+          <div class="cell-stack">
+            <button class="btn-primary" type="button" data-save-access>Save Access</button>
+          </div>
+        </td>
+      </tr>
+    `).join("");
+  }
+
+  async function loadUsers() {
+    const accessKey = getAccessKey();
+    if (!accessKey) return;
+
+    try {
+      const response = await fetch(`${apiBase}/api/admin/users?accessKey=${encodeURIComponent(accessKey)}`);
+      const payload = await response.json();
+
+      if (!response.ok) {
+        setAccessStatus(payload.message || "Unable to load access controls.", "error");
+        return;
+      }
+
+      allUsers = payload.entries || [];
+      renderAccessRows(allUsers);
+      setAccessStatus("Student access controls loaded successfully.", "success");
+    } catch (error) {
+      setAccessStatus("Unable to connect to the access control endpoint right now.", "error");
+    }
+  }
+
+  async function loadEntries() {
+    const accessKey = getAccessKey();
+    if (!accessKey) {
+      setStatus("Enter the admin access key first.", "error");
+      return;
+    }
+
+    loadButton.disabled = true;
+    setStatus("Loading submissions...", "");
+
+    try {
+      const response = await fetch(`${apiBase}/api/admin/waitlist?accessKey=${encodeURIComponent(accessKey)}`);
+      const payload = await response.json();
+
+      if (!response.ok) {
+        setStatus(payload.message || "Unable to load submissions.", "error");
+        return;
+      }
+
+      allEntries = payload.entries || [];
+      updateStats(allEntries);
+      updateCategoryOptions(allEntries);
+      applyFilters();
+      await loadUsers();
+      setStatus("Admin dashboard loaded successfully.", "success");
+    } catch (error) {
+      setStatus("Unable to connect to the admin endpoint right now.", "error");
+    } finally {
+      loadButton.disabled = false;
+    }
+  }
+
+  function downloadCsv() {
+    const accessKey = getAccessKey();
+    if (!accessKey) {
+      setStatus("Enter the admin access key first.", "error");
+      return;
+    }
+
+    window.location.href = `${apiBase}/api/admin/waitlist.csv?accessKey=${encodeURIComponent(accessKey)}`;
+  }
+
+  async function copyEmails() {
+    if (!allEntries.length) {
+      setStatus("Load applications before copying emails.", "error");
+      return;
+    }
+
+    const emails = allEntries
+      .map((entry) => String(entry.email || "").trim())
+      .filter(Boolean)
+      .join(", ");
+
+    try {
+      await navigator.clipboard.writeText(emails);
+      setStatus("All applicant emails copied to clipboard.", "success");
+    } catch (error) {
+      setStatus("Unable to copy emails right now.", "error");
+    }
+  }
+
+  function clearKey() {
+    sessionStorage.removeItem(storageKey);
+    keyInput.value = "";
+    setStatus("Stored admin key cleared from this browser session.", "success");
+  }
+
+  function resetFilters() {
+    searchInput.value = "";
+    categoryFilter.value = "";
+    applyFilters();
+  }
+
+  async function saveUserAccess(row) {
+    const accessKey = getAccessKey();
+    const email = row.getAttribute("data-user-email");
+    const purchased = Boolean(row.querySelector("[data-purchased-toggle]")?.checked);
+    const planId = row.querySelector("[data-plan-select]")?.value || "";
+    const featureInputs = Array.from(row.querySelectorAll("[data-feature-key]"));
+    const featureAccess = featureInputs.reduce((accumulator, input) => {
+      accumulator[input.getAttribute("data-feature-key")] = Boolean(input.checked);
+      return accumulator;
+    }, {});
+
+    try {
+      const response = await fetch(`${apiBase}/api/admin/users/access?accessKey=${encodeURIComponent(accessKey)}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          email,
+          purchased,
+          planId,
+          featureAccess
+        })
+      });
+      const payload = await response.json();
+
+      if (!response.ok) {
+        setAccessStatus(payload.message || "Unable to update access.", "error");
+        return;
+      }
+
+      setAccessStatus(`Access updated for ${email}.`, "success");
+      await loadUsers();
+    } catch (error) {
+      setAccessStatus("Unable to save access right now.", "error");
+    }
+  }
+
+  loadButton.addEventListener("click", loadEntries);
+  refreshButton.addEventListener("click", loadEntries);
+  csvButton.addEventListener("click", downloadCsv);
+  clearKeyButton.addEventListener("click", clearKey);
+  copyEmailsButton.addEventListener("click", copyEmails);
+  resetFiltersButton.addEventListener("click", resetFilters);
+  searchInput.addEventListener("input", applyFilters);
+  categoryFilter.addEventListener("change", applyFilters);
+  accessTableBody.addEventListener("click", (event) => {
+    const button = event.target.closest("[data-save-access]");
+    if (!button) return;
+    const row = button.closest("tr[data-user-email]");
+    if (!row) return;
+    saveUserAccess(row);
+  });
+})();
+</script>
+</body>
+</html>

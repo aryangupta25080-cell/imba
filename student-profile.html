@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Profile | IMBA Beacon</title>
+<script src="./site-config.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Merriweather:wght@700&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --maroon:#6a1f36;
+  --gold:#d4b055;
+  --gold-soft:#e6cf86;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{
+  font-family:"Manrope",system-ui,sans-serif;
+  min-height:100vh;
+  background:
+    radial-gradient(circle at top left, rgba(106,31,54,.16), transparent 26%),
+    linear-gradient(180deg,#eef2f7 0%,#e8edf4 100%);
+  color:#203248;
+}
+a{text-decoration:none;color:inherit}
+.student-shell{width:min(1280px,calc(100% - 1rem));margin:.5rem auto}
+.student-app{
+  display:grid;
+  grid-template-columns:minmax(0,1fr);
+  min-height:min(920px,calc(100vh - 1rem));
+  background:#fbfdff;
+  border:1px solid rgba(31,55,82,.08);
+  border-radius:24px;
+  overflow:hidden;
+  box-shadow:0 24px 60px rgba(23,37,63,.12);
+  position:relative;
+}
+.student-sidebar{
+  background:linear-gradient(180deg,#151b29 0%,#101724 100%);
+  color:#fff;
+  padding:1rem .95rem;
+  display:flex;
+  flex-direction:column;
+  gap:1rem;
+  position:absolute;
+  inset:0 auto 0 0;
+  width:216px;
+  z-index:30;
+  transform:translateX(-108%);
+  transition:transform .28s ease, box-shadow .28s ease;
+}
+.student-app.sidebar-open .student-sidebar{transform:translateX(0);box-shadow:18px 0 48px rgba(16,23,36,.28)}
+.sidebar-scrim{position:absolute;inset:0;background:rgba(9,13,21,.34);opacity:0;pointer-events:none;transition:opacity .24s ease;z-index:24}
+.student-app.sidebar-open .sidebar-scrim{opacity:1;pointer-events:auto}
+.sidebar-brand{
+  display:flex;
+  align-items:center;
+  gap:.8rem;
+  padding:.35rem .35rem 1rem;
+  border-bottom:1px solid rgba(255,255,255,.08);
+}
+.sidebar-brand-badge{
+  width:42px;
+  height:42px;
+  border-radius:14px;
+  display:grid;
+  place-items:center;
+  background:linear-gradient(135deg,var(--gold-soft),var(--gold));
+  color:var(--maroon);
+  font-weight:800;
+  font-size:.92rem;
+}
+.sidebar-brand-copy strong{display:block;font-size:1rem}
+.sidebar-brand-copy span{display:block;color:rgba(255,255,255,.56);font-size:.77rem}
+.sidebar-nav{display:grid;gap:.28rem}
+.sidebar-link{
+  display:flex;
+  align-items:center;
+  gap:.8rem;
+  padding:.82rem .88rem;
+  border-radius:15px;
+  color:rgba(255,255,255,.78);
+  font-weight:700;
+}
+.sidebar-link.active{
+  background:linear-gradient(135deg,rgba(106,31,54,.46),rgba(67,18,32,.88));
+  box-shadow:inset 0 0 0 1px rgba(227,198,128,.12);
+  color:#fff;
+}
+.sidebar-link:hover{background:rgba(255,255,255,.05)}
+.sidebar-icon{
+  width:18px;
+  height:18px;
+  border-radius:6px;
+  background:rgba(255,255,255,.14);
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  font-size:.7rem;
+  flex:0 0 auto;
+}
+.sidebar-foot{
+  margin-top:auto;
+  display:grid;
+  gap:.55rem;
+  padding:.2rem .3rem 0;
+  color:rgba(255,255,255,.48);
+  font-size:.78rem;
+}
+.student-main{padding:.72rem;min-width:0}
+.topbar-left{display:flex;align-items:center;gap:.85rem;min-width:0}
+.menu-toggle{width:46px;height:46px;border:none;border-radius:14px;display:grid;place-items:center;gap:4px;background:#f3f6fa;box-shadow:inset 0 0 0 1px rgba(31,55,82,.08);cursor:pointer;flex:0 0 auto}
+.menu-toggle span{display:block;width:18px;height:2px;border-radius:999px;background:#31465d}
+.topbar-shell{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:1rem;
+  background:#fff;
+  border:1px solid rgba(31,55,82,.08);
+  border-radius:20px;
+  padding:.9rem 1rem;
+  box-shadow:0 10px 30px rgba(31,55,82,.06);
+}
+.topbar-title h1{font-size:1.75rem;line-height:1.05;margin-bottom:.15rem}
+.topbar-title p{color:#738399;font-size:.92rem}
+.topbar-tools{display:flex;align-items:center;gap:.7rem}
+.profile-chip,.logout-btn{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  border-radius:999px;
+  font-weight:800;
+}
+.profile-chip{
+  padding:.46rem .82rem;
+  background:rgba(106,31,54,.08);
+  color:var(--maroon);
+  font-size:.8rem;
+}
+.logout-btn{
+  padding:.82rem 1rem;
+  border:1px solid rgba(31,55,82,.1);
+  background:#fff;
+  color:#586b82;
+  cursor:pointer;
+}
+.profile-layout{
+  display:grid;
+  grid-template-columns:.95fr 1.05fr;
+  gap:1rem;
+  margin-top:.55rem;
+}
+.card{
+  background:#fff;
+  border:1px solid rgba(31,55,82,.08);
+  border-radius:22px;
+  padding:1.1rem;
+  box-shadow:0 12px 28px rgba(31,55,82,.06);
+}
+.profile-hero{
+  color:#fff;
+  background:
+    radial-gradient(circle at top right, rgba(255,255,255,.16), transparent 30%),
+    linear-gradient(135deg,#7f3858 0%,#5b1830 56%,#c29643 100%);
+}
+.profile-pill{
+  display:inline-flex;
+  align-items:center;
+  padding:.4rem .75rem;
+  border-radius:999px;
+  font-size:.74rem;
+  font-weight:800;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+  background:rgba(255,255,255,.14);
+  margin-bottom:.85rem;
+}
+.profile-hero h2{
+  font-family:"Merriweather",serif;
+  font-size:clamp(2rem,4vw,3rem);
+  line-height:1.08;
+}
+.profile-hero p{
+  color:rgba(255,255,255,.84);
+  margin-top:.8rem;
+  max-width:34rem;
+  line-height:1.7;
+}
+.detail-grid{display:grid;gap:.8rem}
+.detail-row{
+  display:flex;
+  justify-content:space-between;
+  gap:1rem;
+  padding:.92rem 1rem;
+  border-radius:16px;
+  background:#f7faff;
+  border:1px solid rgba(31,55,82,.06);
+}
+.detail-row span{color:#74859b}
+.detail-row strong{text-align:right}
+.helper-note{
+  margin-top:1rem;
+  padding:1rem 1.05rem;
+  border-radius:18px;
+  background:linear-gradient(135deg,rgba(106,31,54,.08),rgba(201,162,75,.12));
+  border:1px solid rgba(106,31,54,.08);
+}
+.helper-note h3{font-size:1rem;margin-bottom:.35rem}
+.helper-note p{color:#6d5c62;font-size:.92rem}
+.student-status{min-height:1.5rem;color:#738399;margin-top:.9rem}
+.student-status.error{color:#b33d4b}
+@media (max-width:1080px){.profile-layout{grid-template-columns:1fr}}
+@media (max-width:980px){
+  .student-app{min-height:auto}
+  .topbar-shell{flex-direction:column;align-items:flex-start;padding:.82rem .9rem}
+  .topbar-tools{width:100%;justify-content:flex-start}
+}
+@media (max-width:720px){
+  .student-shell{width:min(100%,calc(100% - .35rem));margin:.18rem auto}
+  .student-sidebar{width:min(84vw,320px);padding:.9rem .8rem}
+  .sidebar-brand-badge{width:38px;height:38px;border-radius:12px;font-size:.84rem}
+  .sidebar-brand-copy strong{font-size:.94rem}
+  .sidebar-brand-copy span{font-size:.72rem}
+  .student-main{padding:.62rem}
+  .topbar-left{width:100%}
+  .topbar-title h1{font-size:1.4rem}
+  .topbar-title p{font-size:.84rem}
+  .card{padding:.95rem;border-radius:18px}
+  .detail-row{padding:.78rem .82rem}
+}
+</style>
+</head>
+<body>
+  <div class="student-shell">
+    <div class="student-app">
+      <div class="sidebar-scrim" id="sidebar-scrim"></div>
+      <aside class="student-sidebar" id="student-sidebar">
+        <div class="sidebar-brand">
+          <div class="sidebar-brand-badge">IB</div>
+          <div class="sidebar-brand-copy">
+            <strong>IMBA Beacon</strong>
+            <span>Course access</span>
+          </div>
+        </div>
+        <nav class="sidebar-nav">
+          <a class="sidebar-link" href="./student.html"><span class="sidebar-icon">■</span><span>Dashboard</span></a>
+          <a class="sidebar-link active" href="./student-profile.html"><span class="sidebar-icon">●</span><span>Profile</span></a>
+          <a class="sidebar-link" href="./student-courses.html"><span class="sidebar-icon">▲</span><span>Courses</span></a>
+          <a class="sidebar-link" href="./student-news.html"><span class="sidebar-icon">✦</span><span>News</span></a>
+          <a class="sidebar-link" href="./student-support.html"><span class="sidebar-icon">?</span><span>Support</span></a>
+        </nav>
+        <div class="sidebar-foot">
+          <div>All students can view available course sections.</div>
+          <div>Paid students unlock guided preparation features.</div>
+        </div>
+      </aside>
+
+      <main class="student-main">
+        <div class="topbar-shell">
+          <div class="topbar-left">
+            <button class="menu-toggle" id="menu-toggle" type="button" aria-label="Open navigation" aria-controls="student-sidebar" aria-expanded="false">
+              <span></span>
+              <span></span>
+              <span></span>
+            </button>
+            <div class="topbar-title">
+              <h1>Profile</h1>
+              <p>Review the account details you entered while creating your IMBA Beacon access.</p>
+            </div>
+          </div>
+          <div class="topbar-tools">
+            <span class="profile-chip" id="account-chip">Beacon Account</span>
+            <button class="logout-btn" id="logout-btn" type="button">Logout</button>
+          </div>
+        </div>
+
+        <section class="profile-layout">
+          <div class="card profile-hero">
+            <span class="profile-pill">Profile Details</span>
+            <h2>Your account information in one place.</h2>
+            <p>This page shows the details submitted during sign up so you can quickly review your course-access information before moving into preparation.</p>
+          </div>
+
+          <div class="card">
+            <div class="detail-grid">
+              <div class="detail-row"><span>Full Name</span><strong id="profile-name">-</strong></div>
+              <div class="detail-row"><span>Email</span><strong id="profile-email">-</strong></div>
+              <div class="detail-row"><span>Phone</span><strong id="profile-phone">-</strong></div>
+              <div class="detail-row"><span>School Percentile</span><strong id="profile-percentile">-</strong></div>
+              <div class="detail-row"><span>Category</span><strong id="profile-category">-</strong></div>
+              <div class="detail-row"><span>Account Type</span><strong id="profile-provider">-</strong></div>
+              <div class="detail-row"><span>Email Verification</span><strong id="profile-verified">-</strong></div>
+              <div class="detail-row"><span>Joined</span><strong id="profile-created">-</strong></div>
+              <div class="detail-row"><span>Last Login</span><strong id="profile-last-login">-</strong></div>
+            </div>
+            <div class="helper-note">
+              <h3>Need to update anything?</h3>
+              <p>If any information is incorrect or incomplete, use the support page and the IMBA Beacon team can help you correct your onboarding details.</p>
+            </div>
+          </div>
+        </section>
+
+        <p class="student-status" id="student-status" aria-live="polite"></p>
+      </main>
+    </div>
+  </div>
+  <script>
+  (function () {
+    const apiBase = (window.IMBA_SITE_CONFIG && window.IMBA_SITE_CONFIG.apiBaseUrl) || "";
+    const statusNode = document.getElementById("student-status");
+    const logoutButton = document.getElementById("logout-btn");
+    const studentApp = document.querySelector(".student-app");
+    const menuToggle = document.getElementById("menu-toggle");
+    const sidebarScrim = document.getElementById("sidebar-scrim");
+    const sidebarLinks = Array.from(document.querySelectorAll(".sidebar-link"));
+
+    function setStatus(message, type) {
+      statusNode.textContent = message;
+      statusNode.className = "student-status" + (type ? " " + type : "");
+    }
+    function setSidebar(open) {
+      studentApp.classList.toggle("sidebar-open", open);
+      menuToggle.setAttribute("aria-expanded", String(open));
+    }
+
+    function formatDate(value) {
+      if (!value) return "Not available";
+      const date = new Date(value);
+      if (Number.isNaN(date.getTime())) return "Not available";
+      return date.toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" });
+    }
+
+    async function init() {
+      try {
+        const response = await fetch(`${apiBase}/api/auth/session`, { credentials: "include" });
+        const payload = await response.json();
+        const user = payload.user || null;
+
+        if (!user) {
+          window.location.href = "./login.html?next=./student-profile.html";
+          return;
+        }
+
+        document.getElementById("account-chip").textContent = user.provider === "google" ? "Google Account" : "Beacon Account";
+        document.getElementById("profile-name").textContent = user.name || "Not provided";
+        document.getElementById("profile-email").textContent = user.email || "Not provided";
+        document.getElementById("profile-phone").textContent = user.phone || "Not provided";
+        document.getElementById("profile-percentile").textContent = user.schoolPercentile ?? "Not provided";
+        document.getElementById("profile-category").textContent = user.category || "Not provided";
+        document.getElementById("profile-provider").textContent = user.provider === "google" ? "Google Account" : "Beacon Account";
+        document.getElementById("profile-verified").textContent = user.emailVerified ? "Verified" : "Pending";
+        document.getElementById("profile-created").textContent = formatDate(user.createdAt);
+        document.getElementById("profile-last-login").textContent = formatDate(user.lastLoginAt);
+      } catch (error) {
+        setStatus("Unable to load your profile right now.", "error");
+      }
+    }
+
+    logoutButton.addEventListener("click", async () => {
+      await fetch(`${apiBase}/api/auth/logout`, { method: "POST", credentials: "include" });
+      window.location.href = "./login.html";
+    });
+    menuToggle.addEventListener("click", () => {
+      setSidebar(!studentApp.classList.contains("sidebar-open"));
+    });
+    sidebarScrim.addEventListener("click", () => {
+      setSidebar(false);
+    });
+    sidebarLinks.forEach((link) => {
+      link.addEventListener("click", () => {
+        setSidebar(false);
+      });
+    });
+    window.addEventListener("keydown", (event) => {
+      if (event.key === "Escape") {
+        setSidebar(false);
+      }
+    });
+
+    window.addEventListener("load", init);
+  })();
+  </script>
+</body>
+</html>

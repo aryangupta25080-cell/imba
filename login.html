@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Login | IMBA Beacon</title>
+<script src="./site-config.js"></script>
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Merriweather:wght@700&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="./section-pages.css"/>
+<style>
+.login-shell{width:min(980px,calc(100% - 2rem));margin:0 auto;padding:4.5rem 0 5rem}
+.login-card{background:#fff;border:1px solid rgba(106,31,54,.1);border-radius:28px;padding:2rem;box-shadow:0 16px 44px rgba(106,31,54,.08)}
+.login-intro h1{font-family:"Merriweather",serif;font-size:clamp(2rem,4vw,3rem);line-height:1.15;margin-bottom:.8rem}
+.login-intro p{color:var(--muted);max-width:62ch}
+.auth-layout{display:grid;grid-template-columns:1fr;gap:1.3rem;margin-top:1.6rem}
+.auth-box{background:var(--surface-alt);border:1px solid rgba(106,31,54,.08);border-radius:24px;padding:1.3rem}
+.auth-box h2{font-size:1rem;margin-bottom:.45rem}
+.auth-box p{color:var(--muted);font-size:.92rem}
+.login-actions{display:flex;align-items:center;gap:.85rem;flex-wrap:wrap;margin:1rem 0 1.25rem}
+.login-user{display:flex;align-items:center;gap:.8rem;padding:.8rem 1rem;border-radius:18px;background:#fff;border:1px solid rgba(106,31,54,.08)}
+.login-user[hidden],.logout-btn[hidden]{display:none!important}
+.login-user img{width:40px;height:40px;border-radius:50%;object-fit:cover}
+.tab-row{display:flex;gap:.65rem;flex-wrap:wrap;margin-bottom:1rem}
+.tab-btn{padding:.78rem 1rem;border-radius:999px;border:1px solid rgba(106,31,54,.12);background:#fff;color:var(--maroon);font-weight:800;cursor:pointer}
+.tab-btn.active{background:linear-gradient(135deg,var(--gold-soft),var(--gold));color:var(--maroon);border-color:transparent}
+.auth-form{display:grid;gap:.8rem}
+.auth-form-row{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.8rem}
+.auth-form input{width:100%;padding:1rem 1.05rem;border:1px solid rgba(106,31,54,.12);border-radius:16px;font:inherit}
+.auth-optional{
+  padding:.95rem 1rem;
+  border-radius:18px;
+  background:rgba(106,31,54,.04);
+  border:1px dashed rgba(106,31,54,.14);
+}
+.auth-optional.required-mode{
+  background:rgba(201,162,75,.12);
+  border:1px solid rgba(201,162,75,.38);
+}
+.auth-optional summary{
+  cursor:pointer;
+  font-weight:800;
+  color:var(--maroon);
+}
+.auth-optional-note{
+  color:var(--muted);
+  font-size:.84rem;
+  margin-top:.6rem;
+  line-height:1.6;
+}
+.auth-form button,.logout-btn{display:inline-flex;align-items:center;justify-content:center;padding:.92rem 1.1rem;border:none;border-radius:999px;background:linear-gradient(135deg,var(--gold-soft),var(--gold));color:var(--maroon);font-weight:800;cursor:pointer}
+.auth-secondary{background:rgba(106,31,54,.08)!important;color:var(--maroon)!important}
+.tab-panel{display:none}
+.tab-panel.active{display:block}
+.inline-actions{display:flex;gap:.7rem;flex-wrap:wrap}
+.login-status{min-height:1.6em;color:var(--muted);margin-top:1rem}
+.login-status.error{color:#b33d4b}
+.login-status.success{color:#7f6a1b}
+.login-status.info{color:#7d5a16}
+.purchase-continue-row{margin-top:.95rem}
+.purchase-continue-row[hidden]{display:none!important}
+.small-note{font-size:.84rem;color:var(--muted);margin-top:.7rem}
+.otp-row{
+  display:flex;
+  gap:.7rem;
+  flex-wrap:wrap;
+  margin-top:.2rem;
+}
+.otp-row[hidden]{display:none!important}
+.otp-row input{
+  flex:1 1 240px;
+}
+.link-row{display:flex;gap:.8rem;flex-wrap:wrap;margin-top:1.2rem}
+@media (max-width:920px){
+  .auth-form-row{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+  <div class="topbar"><div class="topbar-inner"><div class="topbar-links"><a href="./index.html">Home</a><a href="./admissions.html">Admissions</a><a href="./admin.html">Admin</a></div></div></div>
+  <header class="mainnav"><div class="mainnav-inner"><a class="brand" href="./index.html"><div class="brand-mark" aria-hidden="true"><span class="brand-mark-top">iMBA</span><span class="brand-mark-bottom">Beacon</span></div></a><nav class="page-links"><a href="./academics.html">Academics</a><a href="./about.html">About</a><a href="./updates.html">Updates</a><a href="./campus-life.html">Campus Life</a><a href="./admissions.html">Admissions</a></nav></div></header>
+  <main class="login-shell">
+    <section class="login-card">
+      <div class="login-intro">
+        <h1>Login Page</h1>
+        <p>Use the login or sign up tab to continue into your Beacon account.</p>
+      </div>
+
+      <div class="auth-layout">
+        <section class="auth-box">
+          <div class="tab-row">
+            <button class="tab-btn active" type="button" data-tab="login">Login</button>
+            <button class="tab-btn" type="button" data-tab="signup">Sign up</button>
+          </div>
+
+          <div class="tab-panel active" data-panel="login">
+            <h2>Login with email and password</h2>
+            <div class="login-actions">
+              <div id="google-signin-slot"></div>
+              <div class="login-user" id="login-user" hidden>
+                <img id="login-avatar" alt="User avatar"/>
+                <div>
+                  <strong id="login-name">Signed in</strong>
+                  <div id="login-email" style="color:var(--muted);font-size:.88rem;"></div>
+                </div>
+              </div>
+              <button class="logout-btn auth-secondary" id="logout-btn" type="button" hidden>Logout</button>
+            </div>
+            <form class="auth-form" id="password-login-form">
+              <input type="email" name="email" placeholder="Enter your email address" required/>
+              <input type="password" name="password" placeholder="Enter your password" required/>
+              <div class="inline-actions">
+                <button type="submit">Login to Beacon</button>
+              </div>
+            </form>
+          </div>
+
+          <div class="tab-panel" data-panel="signup">
+            <h2>Create your Beacon account</h2>
+            <p>Create your account with any valid email, receive an email OTP, and verify it before your first sign-in.</p>
+            <form class="auth-form" id="signup-form">
+              <input type="text" name="name" placeholder="Enter your full name" required/>
+              <input type="email" name="email" placeholder="Enter your email address" required/>
+              <div class="auth-form-row">
+                <input type="password" name="password" placeholder="Create a password" required/>
+                <input type="password" name="confirmPassword" placeholder="Confirm password" required/>
+              </div>
+              <details class="auth-optional" id="signup-details-panel">
+                <summary id="signup-details-summary">Add profile details now (optional)</summary>
+                <div class="auth-form-row" style="margin-top:.9rem;">
+                  <input type="tel" id="signup-phone" name="phone" placeholder="Enter your phone number" inputmode="numeric" maxlength="10"/>
+                  <input type="number" id="signup-percentile" name="schoolPercentile" placeholder="Enter your school percentile" min="0" max="100" step="0.01"/>
+                </div>
+                <select id="signup-category" name="category" style="width:100%;margin-top:.8rem;padding:1rem 1.05rem;border:1px solid rgba(106,31,54,.12);border-radius:16px;font:inherit;background:#fff;">
+                  <option value="">Select candidate category</option>
+                  <option value="General">General</option>
+                  <option value="OBC">OBC</option>
+                  <option value="SC">SC</option>
+                  <option value="ST">ST</option>
+                  <option value="EWS">EWS</option>
+                  <option value="PwD">PwD</option>
+                  <option value="Other">Other</option>
+                </select>
+                <div class="auth-optional-note" id="signup-details-note">You can also fill these details later from your profile page after sign up.</div>
+              </details>
+              <div class="inline-actions">
+                <button type="submit" id="signup-submit-btn">Create Beacon Account</button>
+              </div>
+            </form>
+            <div class="otp-row" id="signup-otp-row" hidden>
+              <input type="text" id="signup-otp" placeholder="Enter email OTP to verify account" inputmode="numeric" maxlength="6"/>
+              <button type="button" class="auth-secondary" id="verify-signup-otp-btn">Verify OTP</button>
+              <button type="button" class="auth-secondary" id="resend-signup-otp-btn">Resend OTP</button>
+            </div>
+            <div class="small-note" id="signup-note">This account is for students who want to browse courses, read news, and manage their profile before purchasing any program.</div>
+          </div>
+        </section>
+      </div>
+
+      <p class="login-status" id="login-status" aria-live="polite"></p>
+      <div class="inline-actions purchase-continue-row" id="purchase-continue-row" hidden>
+        <button type="button" id="purchase-continue-btn">Continue to Payment</button>
+      </div>
+      <div class="link-row">
+        <a class="nav-cta" href="./admissions.html">Open Admissions Page</a>
+        <a class="tab-btn" href="./index.html">Back to Home</a>
+      </div>
+    </section>
+  </main>
+  <footer><div class="footer-inner"><span>IMBA Beacon</span><span><a href="./index.html">Back to Home</a></span></div></footer>
+  <script>
+  (function () {
+    const apiBase = (window.IMBA_SITE_CONFIG && window.IMBA_SITE_CONFIG.apiBaseUrl) || "";
+    const googleContainer = document.getElementById("google-signin-slot");
+    const loginUser = document.getElementById("login-user");
+    const loginAvatar = document.getElementById("login-avatar");
+    const loginName = document.getElementById("login-name");
+    const loginEmail = document.getElementById("login-email");
+    const logoutButton = document.getElementById("logout-btn");
+    const status = document.getElementById("login-status");
+    const tabButtons = Array.from(document.querySelectorAll("[data-tab]"));
+    const tabPanels = Array.from(document.querySelectorAll("[data-panel]"));
+    const passwordLoginForm = document.getElementById("password-login-form");
+    const signupForm = document.getElementById("signup-form");
+    const signupOtpRow = document.getElementById("signup-otp-row");
+    const signupOtpInput = document.getElementById("signup-otp");
+    const verifySignupOtpButton = document.getElementById("verify-signup-otp-btn");
+    const resendSignupOtpButton = document.getElementById("resend-signup-otp-btn");
+    const signupNote = document.getElementById("signup-note");
+    const purchaseContinueRow = document.getElementById("purchase-continue-row");
+    const purchaseContinueButton = document.getElementById("purchase-continue-btn");
+    const signupDetailsPanel = document.getElementById("signup-details-panel");
+    const signupDetailsSummary = document.getElementById("signup-details-summary");
+    const signupDetailsNote = document.getElementById("signup-details-note");
+    const signupSubmitButton = document.getElementById("signup-submit-btn");
+    const signupPhoneInput = document.getElementById("signup-phone");
+    const signupPercentileInput = document.getElementById("signup-percentile");
+    const signupCategoryInput = document.getElementById("signup-category");
+    let config = null;
+    let user = null;
+    const searchParams = new URLSearchParams(window.location.search);
+    const accessIntent = searchParams.get("access");
+    const purchasePlan = searchParams.get("plan");
+    const requestedNext = searchParams.get("next");
+    let purchaseCheckoutStarted = false;
+
+    function getSafeNextUrl() {
+      if (!requestedNext || !requestedNext.startsWith("./")) return "./student.html";
+      if (requestedNext.includes("login.html")) return "./student.html";
+      return requestedNext;
+    }
+
+    function hasPurchaseIntent() {
+      return accessIntent === "purchase" && Boolean(purchasePlan);
+    }
+
+    function getPurchasePlanLabel() {
+      return purchasePlan === "pro" ? "Pro" : "Basic";
+    }
+
+    function setStatus(message, type) {
+      status.textContent = message;
+      status.className = "login-status" + (type ? " " + type : "");
+    }
+
+    function activateTab(target) {
+      tabButtons.forEach((button) => button.classList.toggle("active", button.dataset.tab === target));
+      tabPanels.forEach((panel) => panel.classList.toggle("active", panel.dataset.panel === target));
+    }
+
+    function applyPurchaseMode() {
+      if (!hasPurchaseIntent()) return;
+
+      const selectedPlanLabel = getPurchasePlanLabel();
+      activateTab("signup");
+      signupDetailsPanel.open = true;
+      signupDetailsPanel.classList.add("required-mode");
+      signupDetailsSummary.textContent = `Complete these details to continue toward the ${selectedPlanLabel} course`;
+      signupDetailsNote.textContent = "Phone number, school percentile, and candidate category are mandatory before course purchase can continue.";
+      signupSubmitButton.textContent = `Create Beacon Account for ${selectedPlanLabel}`;
+      signupPhoneInput.required = true;
+      signupPercentileInput.required = true;
+      signupCategoryInput.required = true;
+      signupNote.textContent = `This sign up is for students who want to continue toward the ${selectedPlanLabel} course. Complete your basic profile details first.`;
+      setStatus(`Before continuing toward the ${selectedPlanLabel} course, complete these profile details and verify your email OTP.`, "info");
+    }
+
+    function syncUi() {
+      if (user) {
+        loginUser.hidden = false;
+        logoutButton.hidden = false;
+        googleContainer.style.display = "none";
+        loginAvatar.src = user.picture || "./assets/imba-beacon-logo.jpeg";
+        loginName.textContent = user.name || "Signed in";
+        loginEmail.textContent = user.email || "";
+      } else {
+        loginUser.hidden = true;
+        logoutButton.hidden = true;
+        googleContainer.style.display = "";
+      }
+
+      purchaseContinueRow.hidden = !(user && hasPurchaseIntent());
+    }
+
+    function getSignupEmail() {
+      return String(new FormData(signupForm).get("email") || "").trim();
+    }
+
+    async function loadConfig() {
+      const response = await fetch(`${apiBase}/api/config`, { credentials: "include" });
+      config = await response.json();
+    }
+
+    async function loadSession() {
+      const response = await fetch(`${apiBase}/api/auth/session`, { credentials: "include" });
+      const payload = await response.json();
+      user = payload.user || null;
+    }
+
+    async function sendJsonRequest(path, body) {
+      const response = await fetch(`${apiBase}${path}`, {
+        method: "POST",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body)
+      });
+      const payload = await response.json();
+      return { response, payload };
+    }
+
+    async function verifyPurchasePayment(paymentDetails) {
+      const { response, payload } = await sendJsonRequest("/api/verify-payment", {
+        planId: purchasePlan,
+        razorpay_order_id: paymentDetails.razorpay_order_id,
+        razorpay_payment_id: paymentDetails.razorpay_payment_id,
+        razorpay_signature: paymentDetails.razorpay_signature
+      });
+
+      if (!response.ok) {
+        setStatus(payload.message || "Payment verification failed.", "error");
+        return false;
+      }
+
+      if (payload.user) {
+        user = payload.user;
+        syncUi();
+      }
+
+      setStatus(payload.message || `${getPurchasePlanLabel()} plan activated successfully. Redirecting you now...`, "success");
+      window.setTimeout(() => {
+        window.location.href = getSafeNextUrl();
+      }, 800);
+      return true;
+    }
+
+    async function startPurchaseCheckout() {
+      if (!hasPurchaseIntent() || !user || purchaseCheckoutStarted) return;
+
+      if (!config?.paymentsEnabled) {
+        setStatus("Online payments are temporarily disabled right now.", "error");
+        return;
+      }
+
+      if (!config?.razorpayKeyId || typeof window.Razorpay !== "function") {
+        setStatus("Razorpay checkout could not be loaded right now.", "error");
+        return;
+      }
+
+      purchaseCheckoutStarted = true;
+      const originalLabel = purchaseContinueButton.textContent;
+      purchaseContinueButton.disabled = true;
+      purchaseContinueButton.textContent = "Preparing checkout...";
+
+      try {
+        const { response, payload } = await sendJsonRequest("/api/create-order", { planId: purchasePlan });
+        if (!response.ok) {
+          setStatus(payload.message || "Unable to create Razorpay order.", "error");
+          return;
+        }
+
+        const razorpay = new window.Razorpay({
+          key: config.razorpayKeyId,
+          amount: payload.amount,
+          currency: payload.currency,
+          name: "IMBA Beacon",
+          description: `${getPurchasePlanLabel()} plan checkout`,
+          order_id: payload.order_id,
+          prefill: {
+            name: user.name || "",
+            email: user.email || "",
+            contact: user.phone || ""
+          },
+          theme: {
+            color: "#6a1f36"
+          },
+          modal: {
+            ondismiss: () => {
+              purchaseCheckoutStarted = false;
+              purchaseContinueButton.disabled = false;
+              purchaseContinueButton.textContent = originalLabel;
+              setStatus("Checkout was closed before payment completion. You can continue again whenever you're ready.", "info");
+            }
+          },
+          handler: (paymentResponse) => {
+            verifyPurchasePayment(paymentResponse).finally(() => {
+              purchaseCheckoutStarted = false;
+              purchaseContinueButton.disabled = false;
+              purchaseContinueButton.textContent = originalLabel;
+            });
+          }
+        });
+
+        razorpay.on("payment.failed", (event) => {
+          purchaseCheckoutStarted = false;
+          purchaseContinueButton.disabled = false;
+          purchaseContinueButton.textContent = originalLabel;
+          const description = event?.error?.description || event?.error?.reason || "Payment failed.";
+          setStatus(description, "error");
+        });
+
+        razorpay.open();
+      } catch (error) {
+        purchaseCheckoutStarted = false;
+        purchaseContinueButton.disabled = false;
+        purchaseContinueButton.textContent = originalLabel;
+        setStatus("Unable to initiate Razorpay checkout right now.", "error");
+      }
+    }
+
+    async function continueAfterAuth(message) {
+      syncUi();
+      if (hasPurchaseIntent()) {
+        setStatus(message || `Signed in successfully. Opening ${getPurchasePlanLabel()} checkout now...`, "success");
+        await startPurchaseCheckout();
+        return;
+      }
+
+      setStatus(message || "Signed in successfully. Redirecting you now...", "success");
+      window.setTimeout(() => {
+        window.location.href = getSafeNextUrl();
+      }, 700);
+    }
+
+    async function handleGoogleLogin(credential) {
+      const { response, payload } = await sendJsonRequest("/api/auth/google", { credential });
+      if (!response.ok) {
+        setStatus(payload.message || "Google sign-in failed.", "error");
+        return;
+      }
+      user = payload.user;
+      await continueAfterAuth(`Signed in as ${user.name}.`);
+    }
+
+    async function init() {
+      try {
+        await loadConfig();
+        await loadSession();
+        if (config.googleClientId && window.google?.accounts?.id) {
+          window.google.accounts.id.initialize({
+            client_id: config.googleClientId,
+            callback: (response) => handleGoogleLogin(response.credential)
+          });
+          window.google.accounts.id.renderButton(googleContainer, {
+            theme: "outline",
+            size: "large",
+            shape: "pill",
+            text: "signin_with",
+            width: 240
+          });
+        }
+        syncUi();
+        if (user) {
+          if (hasPurchaseIntent()) {
+            setStatus(`Welcome back. Opening ${getPurchasePlanLabel()} checkout now...`, "success");
+            await startPurchaseCheckout();
+          } else {
+            window.location.href = getSafeNextUrl();
+          }
+          return;
+        }
+        if (accessIntent === "news" && !user) {
+          setStatus("Sign up or log in to access the interview news briefings and current-affairs content.", "info");
+          activateTab("signup");
+        }
+        applyPurchaseMode();
+      } catch (error) {
+        setStatus("Unable to initialize login right now.", "error");
+      }
+    }
+
+    tabButtons.forEach((button) => button.addEventListener("click", () => activateTab(button.dataset.tab)));
+    passwordLoginForm.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      const formData = new FormData(passwordLoginForm);
+      const { response, payload } = await sendJsonRequest("/api/auth/login/password", Object.fromEntries(formData.entries()));
+      if (!response.ok) {
+        setStatus(payload.message || "Unable to login.", "error");
+        return;
+      }
+      user = payload.user;
+      await continueAfterAuth(payload.message || "Logged in successfully.");
+    });
+
+    signupForm.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      const formData = new FormData(signupForm);
+      const signupPayload = Object.fromEntries(formData.entries());
+      const { response, payload } = await sendJsonRequest("/api/auth/signup", signupPayload);
+      if (!response.ok) {
+        setStatus(payload.message || "Unable to create account.", "error");
+        return;
+      }
+      signupOtpRow.hidden = false;
+      signupNote.textContent = "An OTP has been sent to your email. Enter it below to verify your account and continue.";
+      setStatus(payload.message || "Account created successfully. Verify your OTP to continue.", "success");
+    });
+
+    verifySignupOtpButton.addEventListener("click", async () => {
+      const email = getSignupEmail();
+      const otp = signupOtpInput.value.trim();
+      const { response, payload } = await sendJsonRequest("/api/auth/otp/verify", { email, otp });
+      if (!response.ok) {
+        setStatus(payload.message || "Unable to verify OTP.", "error");
+        return;
+      }
+      user = payload.user;
+      await continueAfterAuth(payload.message || "OTP verified successfully.");
+    });
+
+    resendSignupOtpButton.addEventListener("click", async () => {
+      const email = getSignupEmail();
+      const { response, payload } = await sendJsonRequest("/api/auth/otp/request", { email });
+      if (!response.ok) {
+        setStatus(payload.message || "Unable to resend OTP.", "error");
+        return;
+      }
+      setStatus(payload.message || "A fresh OTP has been sent to your email.", "success");
+    });
+
+    logoutButton.addEventListener("click", async () => {
+      await fetch(`${apiBase}/api/auth/logout`, { method: "POST", credentials: "include" });
+      user = null;
+      purchaseCheckoutStarted = false;
+      purchaseContinueButton.disabled = false;
+      purchaseContinueButton.textContent = "Continue to Payment";
+      syncUi();
+      setStatus("Signed out successfully.", "success");
+    });
+
+    purchaseContinueButton.addEventListener("click", () => {
+      startPurchaseCheckout();
+    });
+
+    window.addEventListener("load", init);
+  })();
+  </script>
+</body>
+</html>
